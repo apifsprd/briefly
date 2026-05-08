@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Lora } from "next/font/google";
 import "./globals.css";
+import TopNav from "@/components/top-nav";
 
  
 const poppins = Poppins({
@@ -32,7 +33,10 @@ export default function RootLayout({
       lang="en"
       className={`${poppins.variable} ${lora.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col ">
+        <TopNav />
+        {children}
+      </body>
     </html>
   );
 }
