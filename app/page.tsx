@@ -1,45 +1,59 @@
+import { getRssFeed } from "@/lib/rss";
 import Image from "next/image";
+import Link from "next/link";
 
-const raw = [
-  {
-    image: "https://assets.guim.co.uk/images/guardian-logo-rss.c45beb1bafa34b347ac333af2e6fe23f.png",
-    title:  "The Guardian"
-  },
-  {
-    image: "https://www.aljazeera.com/images/logo_aje.png",
-    title:  "Al Jazeera"
-  },
-  {
-    image: "https://news.bbcimg.co.uk/nol/shared/img/bbc_news_120x60.gif",
-    title:  "BBC"
-  },
-]
-
-export default function Home() {
+export default async function Home() {
+  const news = await getRssFeed();
   return (
-    <main className="container mx-auto flex h-auto items-center justify-between py-4 px-4">
-       <div className="flex flex-1 justify-between items-start gap-4">
-          {raw.map((item, index) => (
-           <div key={index} className="flex flex-col flex-1 bg-white border border-gray-200 rounded-xl p-4">
-           <div className="flex justify-between items-center">
-             <div className="flex flex-1 flex-row justify-start items-center gap-4">
-              <div className="w-14 h-14 relative ">
-              <Image src={item.image} alt="Guardian" fill objectFit="contain" />
+    // Gunakan kontainer yang deskriptif, tambahkan padding untuk spacing yang baik
+    <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-6">
+      {news.map((source, idx) => (
+        <section
+          key={idx}
+          className="flex flex-col flex-1 bg-white border border-gray-200 rounded-xl p-5"
+          aria-labelledby={`source-${idx}`}
+        >
+          {/* HEADER SUMBER BERITA */}
+          <header className="flex flex-row justify-start items-center mb-6">
+            <div className="w-12 h-12 relative overflow-hidden rounded-full border border-gray-200">
+              <Image
+                src={source.meta.image}
+                alt={`${source.meta.publisher} logo`}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
             </div>
-            <div>
-              <h3>{item.title}</h3>
+            <div className="flex flex-col flex-1 ml-4 ">
+              <h2 id={`source-${idx}`} className="line-clamp-1">
+                {source.meta.publisher}
+              </h2>
             </div>
-            </div>
-            <div>
-              <p className="text-sm">Updated at</p>
-            </div>
-           </div>
-          </div>
-          ))}
+          </header>
 
-       </div>
-       
-    </main>
+          {/* DAFTAR BERITA */}
+          <div className="flex flex-col gap-6">
+            {source?.items?.map((news, nIdx) => (
+              <article
+                key={nIdx}
+                className="group w-full h-auto relative flex flex-row justify-between items-start gap-4 pb-4 border-b border-gray-200 last:border-0 "
+              >
+                <div className="flex flex-col flex-1 gap-2">
+                  <Link href={news.link}>
+                    <h3 className="font-medium leading-snug text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer">
+                      {news.title}
+                    </h3>
+                  </Link>
+
+                  <time className="text-xs font-normal cursor-pointer">
+                    {news.pubDate}
+                  </time>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }
-

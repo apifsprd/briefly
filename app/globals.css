@@ -2,10 +2,10 @@
 
 :root {
   /* Colors */
-  --background: #f5f5f5;
+  --background: #fafafa;
   --foreground: #171717;
   --text-muted: #64748b;
-  
+
   /* Line Height */
   --lh-body: 1.625;
   --lh-heading: 1.2;
@@ -28,43 +28,75 @@
 
 /* --- Base Typography Setup --- */
 @layer base {
+  html {
+    @apply scroll-smooth;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%; /* Mencegah font auto-resize di mobile */
+  }
+
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-sans), sans-serif;
+    @apply font-sans text-black;
     line-height: var(--lh-body);
-    @apply antialiased transition-colors duration-200;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
 
-  /* Headings menggunakan Font Serif (Lora) */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif), serif;
-    font-weight: 700;
+  /* --- Typography --- */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif font-bold text-black;
     line-height: var(--lh-heading);
+    letter-spacing: -0.02em; /* Standar tech company untuk heading yang lebih clean */
   }
 
-  h1 { @apply text-4xl; }
-  h2 { @apply text-3xl; }
-  h3 { @apply text-2xl; }
+  /* Pendekatan Responsive Typography */
+  h1 {
+    @apply text-2xl md:text-3xl lg:text-4xl; /* Turun dari 4xl/6xl */
+  }
 
-  /* Paragraph */
+  h2 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  h3 {
+    @apply text-lg md:text-xl; /* Ukuran ini lebih manis untuk Card Berita */
+  }
+
   p {
-    @apply text-base;
+    @apply text-base text-black leading-relaxed;
   }
 
-  /* Small Text & Metadata */
-  small, .text-sm {
-    color: var(--text-muted);
-    @apply text-sm leading-snug;
+  /* --- Small Text & Metadata --- */
+
+  small,
+  .text-sm {
+    @apply text-sm leading-snug text-black;
   }
 
+  /* Khusus metadata seperti "1 hour ago" */
   .text-xs {
-    color: var(--text-muted);
-    @apply text-xs uppercase;
+    @apply text-xs uppercase tracking-widest font-semibold text-gray-400;
   }
 
-  /* Link Global Styling */
+  /* --- Link Styling --- */
+
   a {
-    @apply transition-colors duration-200 hover:text-blue-600;
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Fokus pada aksesibilitas: outline saat navigasi keyboard */
+  a:focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2 rounded-sm;
+  }
+
+  /* --- Image Defaults --- */
+
+  img {
+    @apply max-w-full h-auto;
   }
 }
