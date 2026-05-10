@@ -3,6 +3,7 @@ import { Poppins, Lora } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { PrimaryNav } from "./components/PrimaryNav";
+import { SecondaryNav } from "./components/SecondaryNav";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -56,27 +57,7 @@ export default function RootLayout({
             <div className="flex-1 flex items-center justify-center px-4 sm:px-8">
               <PrimaryNav />
             </div>
-            <nav aria-label="Secondary Navigation">
-              <ul className="flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium text-gray-500">
-                <li>
-                  <Link
-                    href="/about"
-                    className="hover:text-black transition-colors duration-300"
-                  >
-                    About
-                  </Link>
-                </li>
-                <li className="hidden sm:flex flex-row gap-2 text-gray-400 hover:text-black transition-colors duration-300">
-                  <a
-                    href="https://github.com/apifsprd/briefly"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    v0.5.0-beta
-                  </a>
-                </li>
-              </ul>
-            </nav>
+            <SecondaryNav />
           </div>
         </header>
 
@@ -89,8 +70,7 @@ export default function RootLayout({
         <footer className="bg-gray-100 border-t border-gray-200">
           <div className="container mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 sm:h-20 items-center justify-between px-3 sm:px-4 py-6 sm:py-0 text-xs sm:text-sm text-gray-500">
             <p className="text-center sm:text-left text-gray-500 tracking-normal capitalize font-medium">
-              &copy; {new Date().getFullYear()} Briefly. Latest news from
-              verified sources.
+              Briefly. Latest news from verified sources.
             </p>
             <p className="text-center sm:text-left text-gray-500 tracking-normal capitalize font-medium">
               Made with ❤️ in Indonesia

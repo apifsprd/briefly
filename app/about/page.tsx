@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 export default function page() {
   return (
-    <>
-      <article className="w-full max-w-2xl bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl border border-gray-200">
+    <section>
+      <article className="w-full max-w-2xl bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl md:mx-auto border border-gray-200">
         <header className="mb-8 sm:mb-10 md:mb-12 flex flex-col items-start gap-4 sm:gap-6 md:gap-8">
           <h1>About Briefly</h1>
           <p className="leading-relaxed tracking-wide">
@@ -67,6 +67,6 @@ export default function page() {
           </div>
         </header>
       </article>
-    </>
+    </section>
   );
 }

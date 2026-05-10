@@ -6,19 +6,16 @@ const parser = new Parser();
 interface RssFeed {
   meta: {
     publisher: string;
-    logo?: string; // Update the type of logo to allow for undefined
+    image: string;
     pubDate: string;
     desc: string;
+    url: string;
   };
   items: {
     title: string;
     link: string;
     description: string;
     pubDate: string;
-    image: string;
-    guid: string;
-    author: string;
-    category: string;
     isoDate: string;
   }[];
 }
@@ -38,7 +35,13 @@ const feedSources = {
     "https://www.theguardian.com/international/rss",
     "https://www.thesun.co.uk/news/worldnews/feed/",
   ],
-  football: ["https://www.theguardian.com/football/rss"],
+  football: [
+    "https://feeds.bbci.co.uk/sport/football/rss.xml",
+    "https://www.espn.com/espn/rss/soccer/news",
+    "https://www.theguardian.com/football/rss",
+    "https://talksport.com/football/feed/",
+    "https://www.transfermarkt.co.uk/rss/news",
+  ],
 };
 
 export async function getRssFeed({ category = "world" }: { category: string }) {
@@ -62,8 +65,15 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
               `https://ui-avatars.com/api/?name=${feed.title || "Briefly"}&background=random&length=1`,
             pubDate: feed.pubDate || "",
             desc: feed.description || "",
+            url: feed.link || "",
           },
-          items: feed.items?.slice(0, 5) || [],
+          items: (feed.items?.slice(0, 5) || []).map((item) => ({
+            title: item.title || "No title",
+            link: item.link || "#",
+            description: item.description || item.summary || "No description",
+            pubDate: item.pubDate || "",
+            isoDate: item.isoDate || new Date().toISOString(),
+          })),
         });
       }
     });

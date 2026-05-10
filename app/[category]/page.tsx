@@ -42,7 +42,7 @@ export default async function CategoryPage({ params }: PageProps) {
             <div className="flex flex-col flex-1 gap-0.5 sm:gap-1 min-w-0">
               <h2
                 id={`source-${idx}`}
-                className="line-clamp-1 text-sm sm:text-base md:text-lg"
+                className="line-clamp-1 text-sm sm:text-base md:text-lg hover:text-blue-600 transition-colors duration-300 font-semibold text-gray-900 cursor-pointer capitalize tracking-normal"
               >
                 {source.meta.publisher}
               </h2>
@@ -66,9 +66,10 @@ export default async function CategoryPage({ params }: PageProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <h3 className="font-medium leading-snug text-xs sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer capitalize tracking-normal">
-                      {news.title}
-                    </h3>
+                    <h3
+                      dangerouslySetInnerHTML={{ __html: news.title }}
+                      className="font-medium leading-snug text-xs sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer capitalize tracking-normal "
+                    />
                   </Link>
 
                   <time className="text-xs font-normal cursor-pointer text-gray-400">
