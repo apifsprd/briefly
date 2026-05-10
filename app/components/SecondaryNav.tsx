@@ -8,7 +8,7 @@ export function SecondaryNav() {
 
   return (
     <nav aria-label="Secondary Navigation">
-      <ul className="flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium text-gray-500">
+      <ul className="hidden sm:flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium text-gray-500">
         <li>
           <Link
             href="/about"

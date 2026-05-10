@@ -54,7 +54,7 @@ export default function RootLayout({
             >
               <span>Briefly</span>
             </Link>
-            <div className="flex-1 flex items-center justify-center px-4 sm:px-8">
+            <div className="flex-1 flex items-center justify-start sm:justify-center px-4 sm:px-8">
               <PrimaryNav />
             </div>
             <SecondaryNav />
