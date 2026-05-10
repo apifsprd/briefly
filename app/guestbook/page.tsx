@@ -15,7 +15,7 @@ export default function page() {
           page is open to anyone who wants to share their thoughts, provide
           feedback on version{" "}
           <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-sm font-mono">
-            v0.1.0-beta
+            v0.6.1-beta
           </span>
           , or simply say hello.
         </p>

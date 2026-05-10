@@ -39,7 +39,7 @@ export function SecondaryNav() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            v0.5.0-beta
+            v0.6.1-beta
           </a>
         </li>
       </ul>
