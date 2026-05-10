@@ -1,6 +1,7 @@
 "use client";
 
 import Giscus from "@giscus/react";
+import { version } from "@/package.json";
 
 export default function page() {
   return (
@@ -9,13 +10,13 @@ export default function page() {
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-4">
           Guestbook
         </h1>
-        <p className="text-lg text-gray-600 leading-relaxed">
+        <p className="text-sm md:text-base text-gray-600 leading-relaxed">
           Thank you for visiting Briefly{" "}
           <span className="font-semibold text-blue-600">Briefly</span>. This
           page is open to anyone who wants to share their thoughts, provide
           feedback on version{" "}
           <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-sm font-mono">
-            v0.6.1-beta
+            v{version}
           </span>
           , or simply say hello.
         </p>
