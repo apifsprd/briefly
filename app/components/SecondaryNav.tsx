@@ -82,7 +82,7 @@ export function SecondaryNav() {
         />
       )}
       {isOpen && (
-        <div className="absolute top-12 left-0 right-0 z-50 sm:hidden bg-white border-t border-gray-200 rounded-t-lg">
+        <div className="absolute top-20 left-0 right-0 z-50 sm:hidden bg-white border border-gray-200 rounded-lg shadow-2xl">
           <div className="p-4">
             <div className="flex justify-between items-center mb-4">
               <span className="text-sm font-medium text-gray-900">Menu</span>

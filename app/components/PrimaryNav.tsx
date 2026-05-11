@@ -4,8 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const categories = [
-  { label: "World", href: "/world" },
+  { label: "AI", href: "/ai" },
+  { label: "Bussiness", href: "/business" },
   { label: "Football", href: "/football" },
+  { label: "Tech", href: "/tech" },
+  { label: "World", href: "/world" },
 ];
 
 export function PrimaryNav() {

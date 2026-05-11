@@ -11,7 +11,7 @@ export default function page() {
           Guestbook
         </h1>
         <p className="text-sm md:text-base text-gray-600 leading-relaxed">
-          Thank you for visiting Briefly{" "}
+          Thank you for visiting{" "}
           <span className="font-semibold text-blue-600">Briefly</span>. This
           page is open to anyone who wants to share their thoughts, provide
           feedback on version{" "}
@@ -22,15 +22,6 @@ export default function page() {
         </p>
       </header>
 
-      <section className="bg-sky-50 border-l-4 border-sky-400 p-4 mb-10 rounded-r-lg">
-        <p className="text-sm font-semibold text-sky-800 uppercase tracking-wider mb-2">
-          Login with GitHub
-        </p>
-        <p className="text-sm text-sky-700">
-          To leave a comment, you must log in with your <strong>GitHub</strong>{" "}
-          account.
-        </p>
-      </section>
       <Giscus
         id="comments"
         repo="apifsprd/briefly" // Ganti dengan repo Anda

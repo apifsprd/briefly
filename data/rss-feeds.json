@@ -1,0 +1,67 @@
+{
+  "categories": [
+    {
+      "id": "ai",
+      "name": "AI",
+      "feeds": [
+        "https://bair.berkeley.edu/blog/feed.xml",
+        "https://huggingface.co/blog/feed.xml",
+        "https://www.microsoft.com/en-us/research/feed/",
+        "https://news.mit.edu/rss/topic/artificial-intelligence2",
+        "https://feeds.feedburner.com/nvidiablog",
+        "https://openai.com/news/rss.xml"
+      ]
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "feeds": [
+        "http://feeds2.feedburner.com/businessinsider",
+        "https://fortune.com/feed/fortune-feeds/?id=3230629",
+        "http://feeds.harvardbusiness.org/harvardbusiness/",
+        "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+        "https://www.mckinsey.com/insights/rss"
+      ]
+    },
+    {
+      "id": "world",
+      "name": "World",
+      "feeds": [
+        "https://abcnews.com/abcnews/internationalheadlines",
+        "https://www.aljazeera.com/xml/rss/all.xml",
+        "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "https://www.france24.com/en/rss",
+        "https://www.independent.co.uk/news/world/rss",
+        "https://www.mirror.co.uk/news/world-news/?service=rss",
+        "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml",
+        "https://feeds.skynews.com/feeds/rss/world.xml",
+        "https://www.scmp.com/rss/91/feed/",
+        "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms",
+        "https://www.theguardian.com/international/rss",
+        "https://feeds.washingtonpost.com/rss/world"
+      ]
+    },
+    {
+      "id": "tech",
+      "name": "Tech",
+      "feeds": [
+        "https://feeds.arstechnica.com/arstechnica/index",
+        "https://www.technologyreview.com/feed/",
+        "https://techcrunch.com/feed/",
+        "https://www.theverge.com/rss/index.xml",
+        "https://www.wired.com/feed/rss"
+      ]
+    },
+    {
+      "id": "football",
+      "name": "Football",
+      "feeds": [
+        "https://feeds.bbci.co.uk/sport/football/rss.xml",
+        "https://www.espn.com/espn/rss/soccer/news",
+        "https://www.theguardian.com/football/rss",
+        "https://talksport.com/football/feed/",
+        "https://www.transfermarkt.co.uk/rss/news"
+      ]
+    }
+  ]
+}

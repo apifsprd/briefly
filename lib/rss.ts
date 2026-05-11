@@ -1,5 +1,5 @@
-// lib/rss.ts
 import Parser from "rss-parser";
+import rssData from "@/data/rss-feeds.json";
 
 const parser = new Parser();
 
@@ -20,34 +20,13 @@ interface RssFeed {
   }[];
 }
 
-const feedSources = {
-  world: [
-    "https://abcnews.com/abcnews/internationalheadlines",
-    "https://www.aljazeera.com/xml/rss/all.xml",
-    "http://rss.cnn.com/rss/edition_world.rss",
-    "https://feeds.bbci.co.uk/news/world/rss.xml",
-    "https://www.france24.com/en/rss",
-    "https://www.independent.co.uk/news/world/rss",
-    "https://www.mirror.co.uk/news/world-news/?service=rss",
-    "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml",
-    "https://feeds.skynews.com/feeds/rss/world.xml",
-    "https://www.scmp.com/rss/91/feed/",
-    "https://www.theguardian.com/international/rss",
-    "https://www.thesun.co.uk/news/worldnews/feed/",
-  ],
-  football: [
-    "https://feeds.bbci.co.uk/sport/football/rss.xml",
-    "https://www.espn.com/espn/rss/soccer/news",
-    "https://www.theguardian.com/football/rss",
-    "https://talksport.com/football/feed/",
-    "https://www.transfermarkt.co.uk/rss/news",
-  ],
+const mainUrl = (url: string) => {
+  return new URL(url).origin;
 };
 
 export async function getRssFeed({ category = "world" }: { category: string }) {
   try {
-    const urls =
-      feedSources[category as keyof typeof feedSources] || feedSources.world;
+    const urls = rssData.categories.find((c) => c.id === category)?.feeds || [];
 
     const feedPromises = urls.map((url) => parser.parseURL(url));
     const results = await Promise.allSettled(feedPromises);
@@ -65,9 +44,16 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
               `https://ui-avatars.com/api/?name=${feed.title || "Briefly"}&background=random&length=1`,
             pubDate: feed.pubDate || "",
             desc: feed.description || "",
-            url: feed.link || "",
+            url: mainUrl(feed?.link || "") || "",
           },
-          items: (feed.items?.slice(0, 5) || []).map((item) => ({
+          items: (
+            feed.items
+              ?.sort(
+                (a, b) =>
+                  new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime(),
+              )
+              .slice(0, 5) || []
+          ).map((item) => ({
             title: item.title || "No title",
             link: item.link || "#",
             description: item.description || item.summary || "No description",

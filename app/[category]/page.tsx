@@ -21,6 +21,11 @@ export default async function CategoryPage({ params }: PageProps) {
   const { category } = await params;
   const news = await getRssFeed({ category });
 
+  const cleanTitle = (html: string) => {
+    // remove <a> tags
+    return html.replace(/<a\b[^>]*>(.*?)<\/a>/gi, "$1");
+  };
+
   return (
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-between items-start gap-4 sm:gap-5 md:gap-6">
       {news.map((source, idx) => (
@@ -30,7 +35,7 @@ export default async function CategoryPage({ params }: PageProps) {
           aria-labelledby={`source-${idx}`}
         >
           <header className="flex flex-row justify-start items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="w-14 sm:w-16 md:w-18 h-14 sm:h-16 md:h-18 relative overflow-hidden rounded-full border border-gray-200 flex-shrink-0">
+            <div className="w-14 sm:w-16 md:w-18 h-14 sm:h-16 md:h-18 relative overflow-hidden rounded-full border border-gray-200 shrink-0">
               <Image
                 src={source.meta.image}
                 alt={`${source.meta.publisher} logo`}
@@ -40,12 +45,18 @@ export default async function CategoryPage({ params }: PageProps) {
               />
             </div>
             <div className="flex flex-col flex-1 gap-0.5 sm:gap-1 min-w-0">
-              <h2
-                id={`source-${idx}`}
-                className="line-clamp-1 text-sm sm:text-base md:text-lg hover:text-blue-600 transition-colors duration-300 font-semibold text-gray-900 cursor-pointer capitalize tracking-normal"
+              <Link
+                href={source.meta.url}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {source.meta.publisher}
-              </h2>
+                <h2
+                  id={`source-${idx}`}
+                  className="line-clamp-1 text-base sm:text-base md:text-lg hover:text-blue-600 transition-colors duration-300 font-semibold text-gray-900 cursor-pointer capitalize tracking-normal"
+                >
+                  {source.meta.publisher}
+                </h2>
+              </Link>
               {source.meta.desc && (
                 <p className="line-clamp-2 text-xs sm:text-sm text-gray-400 capitalize tracking-normal font-medium">
                   {source.meta.desc}
@@ -58,7 +69,7 @@ export default async function CategoryPage({ params }: PageProps) {
             {source?.items?.map((news, nIdx) => (
               <article
                 key={nIdx}
-                className="group w-full h-auto relative flex flex-row justify-between items-start gap-2 sm:gap-3 pb-3 sm:pb-4 border-b border-gray-200 last:border-0 "
+                className="group w-full h-auto relative flex flex-row justify-between items-start gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200 "
               >
                 <div className="flex flex-col flex-1 gap-1 sm:gap-2 min-w-0">
                   <Link
@@ -67,12 +78,14 @@ export default async function CategoryPage({ params }: PageProps) {
                     rel="noopener noreferrer"
                   >
                     <h3
-                      dangerouslySetInnerHTML={{ __html: news.title }}
-                      className="font-medium leading-snug text-xs sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer capitalize tracking-normal "
+                      dangerouslySetInnerHTML={{
+                        __html: cleanTitle(news.title) || "",
+                      }}
+                      className="font-medium leading-snug text-sm sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer capitalize tracking-normal "
                     />
                   </Link>
 
-                  <time className="text-xs font-normal cursor-pointer text-gray-400">
+                  <time className="text-xs font-normal cursor-pointer text-gray-500">
                     {dayjs(news.isoDate).fromNow()}
                   </time>
                 </div>
