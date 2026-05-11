@@ -24,7 +24,6 @@ const feedSources = {
   world: [
     "https://abcnews.com/abcnews/internationalheadlines",
     "https://www.aljazeera.com/xml/rss/all.xml",
-    "http://rss.cnn.com/rss/edition_world.rss",
     "https://feeds.bbci.co.uk/news/world/rss.xml",
     "https://www.france24.com/en/rss",
     "https://www.independent.co.uk/news/world/rss",
