@@ -48,10 +48,11 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
           },
           items: (
             feed.items
-              ?.sort(
-                (a, b) =>
-                  new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime(),
-              )
+              ?.sort((a, b) => {
+                const dateB = new Date(b.isoDate ?? "").getTime();
+                const dateA = new Date(a.isoDate ?? "").getTime();
+                return dateB - dateA;
+              })
               .slice(0, 5) || []
           ).map((item) => ({
             title: item.title || "No title",
