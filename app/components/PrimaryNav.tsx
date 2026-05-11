@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const categories = [
   { label: "AI", href: "/ai" },
-  { label: "Bussiness", href: "/business" },
+  { label: "Business", href: "/business" },
   { label: "Football", href: "/football" },
   { label: "Tech", href: "/tech" },
   { label: "World", href: "/world" },
