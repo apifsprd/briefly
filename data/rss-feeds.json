@@ -8,7 +8,6 @@
         "https://huggingface.co/blog/feed.xml",
         "https://www.microsoft.com/en-us/research/feed/",
         "https://news.mit.edu/rss/topic/artificial-intelligence2",
-        "https://feeds.feedburner.com/nvidiablog",
         "https://openai.com/news/rss.xml"
       ]
     },
@@ -16,7 +15,6 @@
       "id": "business",
       "name": "Business",
       "feeds": [
-        "http://feeds2.feedburner.com/businessinsider",
         "https://www.dailymail.com/money/index.rss",
         "https://fortune.com/feed/fortune-feeds/?id=3230629",
         "http://feeds.harvardbusiness.org/harvardbusiness/",

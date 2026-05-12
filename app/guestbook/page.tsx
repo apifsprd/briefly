@@ -6,7 +6,7 @@ import { version } from "@/package.json";
 export default function page() {
   return (
     <section className="w-full max-w-2xl bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl md:mx-auto border border-gray-200">
-      <header className="mb-10 text-center md:text-left">
+      <header className="mb-10 text-left">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-4">
           Guestbook
         </h1>
