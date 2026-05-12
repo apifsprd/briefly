@@ -20,7 +20,8 @@
         "https://fortune.com/feed/fortune-feeds/?id=3230629",
         "http://feeds.harvardbusiness.org/harvardbusiness/",
         "https://feeds.content.dowjones.io/public/rss/mw_topstories",
-        "https://www.mckinsey.com/insights/rss"
+        "https://www.mckinsey.com/insights/rss",
+        "https://asia.nikkei.com/rss/feed/nar"
       ]
     },
     {
@@ -30,6 +31,11 @@
         "https://abcnews.com/abcnews/internationalheadlines",
         "https://www.aljazeera.com/xml/rss/all.xml",
         "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "https://www.cbsnews.com/latest/rss/world",
+        "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6311",
+        "https://www.dailymail.com/news/worldnews/index.rss",
+        "https://rss.dw.com/rdf/rss-en-world",
+        "https://feeds.elpais.com/mrss-s/pages/ep/site/english.elpais.com/portada",
         "https://www.france24.com/en/rss",
         "https://www.independent.co.uk/news/world/rss",
         "https://www.mirror.co.uk/news/world-news/?service=rss",
