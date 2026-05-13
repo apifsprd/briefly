@@ -55,12 +55,12 @@ export default async function Home() {
                     </time>
                   </div>
                   <h2
-                    className="text-lg sm:text-xl lg:text-2xl font-medium leading-snug text-gray-900 group-hover:text-blue-600 transition-colors duration-300 capitalize cursor-pointer line-clamp-3"
+                    className="text-base sm:text-base md:text-lg font-medium leading-snug text-gray-900 group-hover:text-blue-600 transition-colors duration-300 capitalize cursor-pointer line-clamp-3"
                     dangerouslySetInnerHTML={{
                       __html: cleanTitle(source.items[0].title),
                     }}
                   />
-                  <p className="text-sm sm:text-sm lg:text-base text-gray-600 leading-relaxed line-clamp-4">
+                  <p className="text-sm sm:text-sm md:text-base text-gray-500 leading-relaxed line-clamp-4">
                     {source.items[0].description || source.items[0].title}
                   </p>
                 </article>
@@ -76,10 +76,10 @@ export default async function Home() {
                 key={idx}
               >
                 <article className="flex flex-col gap-2 group:">
-                  <h3 className="text-base sm:text-base lg:text-lg font-medium leading-snug text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-300 capitalize line-clamp-2">
+                  <h3 className="text-base sm:text-base md:text-lg font-medium leading-snug text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-300 capitalize line-clamp-2">
                     {source.items[0].title}
                   </h3>
-                  <p className="text-sm sm:text-sm lg:text-base text-gray-600">
+                  <p className="text-xs sm:text-xs lg:text-sm text-gray-400">
                     {source.meta.publisher} -{" "}
                     {dayjs(source.items[0].isoDate).fromNow()}
                   </p>
