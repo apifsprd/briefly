@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { PrimaryNav } from "./components/PrimaryNav";
 import { SecondaryNav } from "./components/SecondaryNav";
+import { Analytics } from "@vercel/analytics/next";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -80,6 +81,8 @@ export default function RootLayout({
             </p>
           </div>
         </footer>
+
+        <Analytics />
       </body>
     </html>
   );
