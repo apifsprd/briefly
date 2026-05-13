@@ -70,7 +70,7 @@ export default function RootLayout({
           </div>
         </main>
 
-        <footer className="bg-gray-100 border-t border-gray-200">
+        <footer className="bg-gray-100 border-t border-gray-200 mt-8">
           <div className="container mx-auto flex flex-col sm:flex-row gap-4 sm:gap-0 sm:h-20 items-center justify-between px-3 sm:px-4 py-6 sm:py-0 text-xs sm:text-sm text-gray-500">
             <p className="text-center sm:text-left text-gray-500 tracking-normal capitalize font-medium">
               Briefly. Latest news from verified sources.
