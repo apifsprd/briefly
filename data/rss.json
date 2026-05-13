@@ -1,0 +1,202 @@
+{
+  "categories": [
+    {
+      "id": "ai",
+      "name": "AI",
+      "feeds": [
+        {
+          "name": "Berkeley AI Research",
+          "url": "https://bair.berkeley.edu/blog/feed.xml"
+        },
+        {
+          "name": "Hugging Face",
+          "url": "https://huggingface.co/blog/feed.xml"
+        },
+        {
+          "name": "Microsoft",
+          "url": "https://www.microsoft.com/en-us/research/feed/"
+        },
+        {
+          "name": "MIT News",
+          "url": "https://news.mit.edu/rss/topic/artificial-intelligence2"
+        },
+        {
+          "name": "OpenAI",
+          "url": "https://openai.com/news/rss.xml"
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "feeds": [
+        {
+          "name": "Daily Mail",
+          "url": "https://www.dailymail.com/money/index.rss"
+        },
+        {
+          "name": "Fortune",
+          "url": "https://fortune.com/feed/fortune-feeds/?id=3230629"
+        },
+        {
+          "name": "Harvard Business Review",
+          "url": "http://feeds.harvardbusiness.org/harvardbusiness/"
+        },
+        {
+          "name": "McKinsey",
+          "url": "https://www.mckinsey.com/insights/rss"
+        },
+        {
+          "name": "Nikkei Asia",
+          "url": "https://asia.nikkei.com/rss/feed/nar"
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "name": "World",
+      "feeds": [
+        {
+          "name": "ABC News",
+          "url": "https://abcnews.com/abcnews/internationalheadlines"
+        },
+        {
+          "name": "Al Jazeera",
+          "url": "https://www.aljazeera.com/xml/rss/all.xml"
+        },
+        {
+          "name": "BBC",
+          "url": "https://feeds.bbci.co.uk/news/world/rss.xml"
+        },
+        {
+          "name": "CBS News",
+          "url": "https://www.cbsnews.com/latest/rss/world"
+        },
+        {
+          "name": "Channel News Asia",
+          "url": "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml&category=6311"
+        },
+        {
+          "name": "Daily Mail",
+          "url": "https://www.dailymail.com/news/worldnews/index.rss"
+        },
+        {
+          "name": "DW",
+          "url": "https://rss.dw.com/rdf/rss-en-world"
+        },
+        {
+          "name": "El Pais",
+          "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/english.elpais.com/portada"
+        },
+        {
+          "name": "France 24",
+          "url": "https://www.france24.com/en/rss"
+        },
+        {
+          "name": "Independent",
+          "url": "https://www.independent.co.uk/news/world/rss"
+        },
+        {
+          "name": "Mirror",
+          "url": "https://www.mirror.co.uk/news/world-news/?service=rss"
+        },
+        {
+          "name": "NY Times",
+          "url": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml"
+        },
+        {
+          "name": "Sky News",
+          "url": "https://feeds.skynews.com/feeds/rss/world.xml"
+        },
+        {
+          "name": "South China Morning Post",
+          "url": "https://www.scmp.com/rss/91/feed/"
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/international/rss"
+        },
+        {
+          "name": "Times of India",
+          "url": "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms"
+        },
+        {
+          "name": "Washington Post",
+          "url": "https://feeds.washingtonpost.com/rss/world"
+        }
+      ]
+    },
+    {
+      "id": "tech",
+      "name": "Tech",
+      "feeds": [
+        {
+          "name": "Ars Technica",
+          "url": "https://feeds.arstechnica.com/arstechnica/index"
+        },
+        {
+          "name": "CBS News",
+          "url": "https://www.cbsnews.com/latest/rss/technology"
+        },
+        {
+          "name": "MIT Technology Review",
+          "url": "https://www.technologyreview.com/feed/"
+        },
+        {
+          "name": "Tech Crunch",
+          "url": "https://techcrunch.com/feed/"
+        },
+        {
+          "name": "The Verge",
+          "url": "https://www.theverge.com/rss/index.xml"
+        },
+        {
+          "name": "Wired",
+          "url": "https://www.wired.com/feed/rss"
+        }
+      ]
+    },
+    {
+      "id": "football",
+      "name": "Football",
+      "feeds": [
+        {
+          "name": "BBC",
+          "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"
+        },
+        {
+          "name": "CBS Sports",
+          "url": "https://www.cbssports.com/rss/headlines/soccer/"
+        },
+        {
+          "name": "Daily Mail",
+          "url": "https://www.dailymail.com/sport/football/articles.rss"
+        },
+        {
+          "name": "ESPN",
+          "url": "https://www.espn.com/espn/rss/soccer/news"
+        },
+        {
+          "name": "Fox Sports",
+          "url": "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=fs/soccer,soccer/epl/league/1,soccer/mls/league/5,soccer/ucl/league/7,soccer/europa/league/8,soccer/wc/league/12,soccer/euro/league/13,soccer/wwc/league/14,soccer/nwsl/league/20,soccer/cwc/league/26,soccer/gold_cup/league/32,soccer/unl/league/67"
+        },
+        {
+          "name": "Sky Sports",
+          "url": "https://www.skysports.com/sitemap_news_football.xml"
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/football/rss"
+        },
+        {
+          "name": "TalkSport",
+          "url": "https://talksport.com/football/feed/"
+        },
+        {
+          "name": "Transfermarkt",
+          "url": "https://www.transfermarkt.co.uk/rss/news"
+        }
+      ]
+    }
+  ]
+}

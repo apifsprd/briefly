@@ -11,10 +11,6 @@ interface PageProps {
   }>;
 }
 
-export async function generateStaticParams() {
-  return [{ category: "world" }, { category: "football" }];
-}
-
 export const revalidate = 3600;
 
 export default async function CategoryPage({ params }: PageProps) {
@@ -29,11 +25,7 @@ export default async function CategoryPage({ params }: PageProps) {
   return (
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-between items-start gap-4 sm:gap-5 md:gap-6">
       {news.map((source, idx) => (
-        <section
-          key={idx}
-          className="flex flex-col flex-1 bg-white border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5"
-          aria-labelledby={`source-${idx}`}
-        >
+        <section key={idx} className="card" aria-labelledby={`source-${idx}`}>
           <header className="flex flex-row justify-start items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="w-14 sm:w-16 md:w-18 h-14 sm:h-16 md:h-18 relative overflow-hidden rounded-full border border-gray-200 shrink-0">
               <Image
@@ -58,18 +50,18 @@ export default async function CategoryPage({ params }: PageProps) {
                 </h2>
               </Link>
               {source.meta.desc && (
-                <p className="line-clamp-2 text-xs sm:text-sm text-gray-400 capitalize tracking-normal font-medium">
+                <p className="line-clamp-2 text-xs sm:text-sm text-gray-400 capitalize tracking-normal font-medium leading-snug">
                   {source.meta.desc}
                 </p>
               )}
             </div>
           </header>
 
-          <div className="flex flex-col gap-3 sm:gap-4 md:gap-6">
+          <div className="flex flex-col ">
             {source?.items?.map((news, nIdx) => (
               <article
                 key={nIdx}
-                className="group w-full h-auto relative flex flex-row justify-between items-start gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-gray-200 "
+                className="group w-full h-auto relative flex flex-row justify-center items-start gap-2 sm:gap-3 border-t border-gray-200 py-4"
               >
                 <div className="flex flex-col flex-1 gap-1 sm:gap-2 min-w-0">
                   <Link

@@ -96,4 +96,10 @@
   img {
     @apply max-w-full h-auto;
   }
+
+  /* Card */
+
+  .card {
+    @apply flex flex-col flex-1 bg-white border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5;
+  }
 }
