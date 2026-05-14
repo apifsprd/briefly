@@ -1,4 +1,9 @@
-import { getLatestFeedFromAllSources, RssFeed } from "@/lib/rss";
+import {
+  getLatestFeedFromAllSources,
+  getLatestNewsFromAllCategories,
+  RssFeed,
+  RssItemNotSeparated,
+} from "@/lib/rss";
 import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
@@ -13,23 +18,40 @@ const cleanTitle = (html: string) => {
 };
 
 export default async function Home() {
-  const latestNews: { hero: RssFeed[]; aside: RssFeed[] } =
-    (await getLatestFeedFromAllSources()) as {
-      hero: RssFeed[];
-      aside: RssFeed[];
-    };
+  const latestNews: {
+    hero: RssItemNotSeparated[];
+    aside: RssItemNotSeparated[];
+  } = (await getLatestFeedFromAllSources()) as {
+    hero: RssItemNotSeparated[];
+    aside: RssItemNotSeparated[];
+  };
+  const latestNewsFromAllCategory = await getLatestNewsFromAllCategories();
 
   return (
-    <div className="w-full flex flex-col gap-4 sm:gap-5 lg:gap-6">
-      <section className="w-full flex flex-col gap-4 sm:gap-5 lg:gap-6">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight text-gray-900 ">
+    <div className="w-full flex flex-col gap-6 sm:gap-6 lg:gap-8">
+      <section
+        className="w-full flex flex-col gap-4 sm:gap-5 lg:gap-6"
+        aria-labelledby="latest-news"
+      >
+        <div className="relative w-full h-32 sm:h-48 md:h-64 overflow-hidden">
+          <Image
+            src="/images/header-banner.png"
+            alt="Briefly Special Announcement"
+            fill
+            priority
+            className="object-contain object-center"
+            sizes="100vw"
+          />
+        </div>
+
+        <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold leading-tight text-gray-900 ">
           Latest News
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
             {latestNews.hero.map((source, idx) => (
               <Link
-                href={source.items[0].link}
+                href={source.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 key={idx}
@@ -39,30 +61,33 @@ export default async function Home() {
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 relative rounded-full overflow-hidden border border-gray-200 shrink-0">
                         <Image
-                          src={source.meta.image}
-                          alt={source.meta.publisher}
+                          src={source.publisherImage}
+                          alt={source.publisher}
                           fill
                           className="object-contain"
                           sizes="32px"
                         />
                       </div>
-                      <span className="text-sm font-medium text-gray-600 capitalize">
-                        {source.meta.publisher}
+                      <span className="text-xs sm:text-xs lg:text-sm font-medium tracking-normal text-gray-900 uppercase">
+                        {source.publisher}
                       </span>
                     </div>
-                    <time className="text-xs font-normal cursor-pointer text-gray-600">
-                      {dayjs(source.items[0].isoDate).fromNow()}
+                    <time className="text-xs font-normal cursor-pointer text-gray-400">
+                      {dayjs(source.isoDate).fromNow()}
                     </time>
                   </div>
                   <h2
-                    className="text-base sm:text-base md:text-lg font-medium leading-snug text-gray-900 group-hover:text-blue-600 transition-colors duration-300 capitalize cursor-pointer line-clamp-3"
+                    className="text-base sm:text-base md:text-lg lg:text-xl font-medium leading-snug text-gray-900 group-hover:text-blue-600 transition-colors duration-300 capitalize cursor-pointer line-clamp-3"
                     dangerouslySetInnerHTML={{
-                      __html: cleanTitle(source.items[0].title),
+                      __html: cleanTitle(source.title),
                     }}
                   />
-                  <p className="text-sm sm:text-sm md:text-base text-gray-500 leading-relaxed line-clamp-4">
-                    {source.items[0].description || source.items[0].title}
-                  </p>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: source.description || source.title,
+                    }}
+                    className="text-sm sm:text-sm md:text-base text-gray-500 leading-relaxed line-clamp-4"
+                  />
                 </article>
               </Link>
             ))}
@@ -70,21 +95,62 @@ export default async function Home() {
           <div className="card h-full gap-4 justify-between">
             {latestNews.aside.map((source, idx) => (
               <Link
-                href={source.items[0].link}
+                href={source.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 key={idx}
               >
-                <article className="flex flex-col gap-2 group:">
-                  <h3 className="text-base sm:text-base md:text-lg font-medium leading-snug text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-300 capitalize line-clamp-2">
-                    {source.items[0].title}
-                  </h3>
-                  <p className="text-xs sm:text-xs lg:text-sm text-gray-400">
-                    {source.meta.publisher} -{" "}
-                    {dayjs(source.items[0].isoDate).fromNow()}
+                <article
+                  className={`flex flex-col gap-2 group ${idx !== latestNews.aside.length - 1 ? "border-b border-gray-200 pb-4" : "border-0"} `}
+                >
+                  <h3
+                    dangerouslySetInnerHTML={{ __html: source.title }}
+                    className="text-base sm:text-base font-medium leading-snug text-gray-900 cursor-pointer capitalize line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 "
+                  />
+                  <p className="text-xs sm:text-xs lg:text-sm text-gray-400 font-normal tracking-normal line-clamp-1">
+                    {source.publisher} - {dayjs(source.isoDate).fromNow()}
                   </p>
                 </article>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section
+        className="w-full flex flex-col gap-4 sm:gap-5 lg:gap-6"
+        aria-labelledby="category"
+      >
+        <div className="w-full flex flex-col gap-4 sm:gap-5 lg:gap-6">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 ">
+            Latest News By Category
+          </h1>
+          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
+            {Object.keys(latestNewsFromAllCategory).map((category) => (
+              <article key={category} className="card gap-4">
+                <h2 className="text-lg sm:text-lg md:text-xl font-semibold leading-snug text-gray-900 uppercase line-clamp-2">
+                  {category}
+                </h2>
+                {latestNewsFromAllCategory[category].items.map(
+                  (source, idx) => (
+                    <Link
+                      href={source.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      key={`${category}-${idx}`}
+                    >
+                      <article className="flex flex-col gap-2 group border-t border-gray-200 pt-4">
+                        <h3
+                          dangerouslySetInnerHTML={{ __html: source.title }}
+                          className="text-base sm:text-base font-medium leading-snug text-gray-900 cursor-pointer group-hover:text-blue-600 transition-colors duration-300 capitalize line-clamp-2"
+                        />
+                        <p className="text-xs sm:text-xs lg:text-sm text-gray-400 font-normal tracking-normal line-clamp-1">
+                          {source.publisher} - {dayjs(source.isoDate).fromNow()}
+                        </p>
+                      </article>
+                    </Link>
+                  ),
+                )}
+              </article>
             ))}
           </div>
         </div>

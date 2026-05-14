@@ -102,7 +102,40 @@ Please follow the [Conventional Commits](https://www.conventionalcommits.org/) s
 
 ---
 
-## 📜 Ethical Extraction Policy
+## � Adding RSS Feeds
+
+Want to contribute a new RSS feed to Briefly? Great! Please ensure the following requirements are met:
+
+### Requirements
+
+1. **Official Source Only** — The RSS feed must come directly from the news organization or publisher. Third-party aggregators or unofficial feeds are **not accepted**.
+
+2. **Date Information** — The feed items must contain **either**:
+   - `isoDate` — Already in ISO 8601 format (e.g., `2026-05-14T10:30:00.000Z`)
+   - `pubDate` — With timezone information (e.g., `Mon, 14 May 2026 10:30:00 GMT`)
+
+3. **Quality Content** — The feed should provide meaningful article titles, descriptions, and links back to the original content.
+
+### How to Add
+
+1. Locate the RSS feed URL from the official news organization
+2. Add the feed to `data/rss.json` under the appropriate category
+3. Test the feed to ensure it parses correctly
+4. Submit a Pull Request with details about the feed source
+
+---
+
+## 💝 Support This Project
+
+If you find Briefly useful and want to support its development, consider making a donation:
+
+**[Donate via PayPal](https://paypal.me/apifsprd)**
+
+Your support helps maintain this project and keep it free and open-source for everyone.
+
+---
+
+## �📜 Ethical Extraction Policy
 
 Briefly is built on the principle that **content creators deserve respect**. This means:
 

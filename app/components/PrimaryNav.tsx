@@ -11,6 +11,7 @@ const categories = [
   { label: "AI", href: "/ai" },
   { label: "Business", href: "/business" },
   { label: "Football", href: "/football" },
+  { label: "Market", href: "/market" },
   { label: "Tech", href: "/tech" },
   { label: "World", href: "/world" },
 ];
@@ -20,7 +21,7 @@ export function PrimaryNav() {
 
   return (
     <nav aria-label="Primary Navigation">
-      <ul className="flex items-center gap-4 sm:gap-6 md:gap-8 font-normal text-xs sm:text-sm md:text-base text-gray-400 font-poppins tracking-normal">
+      <ul className="w-full flex items-center gap-4 sm:gap-4 md:gap-6 font-normal text-xs sm:text-sm md:text-base text-gray-400 font-poppins tracking-normal whitespace-nowrap">
         {categories.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");

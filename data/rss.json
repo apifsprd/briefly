@@ -49,6 +49,96 @@
       ]
     },
     {
+      "id": "football",
+      "name": "Football",
+      "feeds": [
+        {
+          "name": "BBC",
+          "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"
+        },
+        {
+          "name": "CBS Sports",
+          "url": "https://www.cbssports.com/rss/headlines/soccer/"
+        },
+        {
+          "name": "Daily Mail",
+          "url": "https://www.dailymail.com/sport/football/articles.rss"
+        },
+        {
+          "name": "Fox Sports",
+          "url": "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=fs/soccer,soccer/epl/league/1,soccer/mls/league/5,soccer/ucl/league/7,soccer/europa/league/8,soccer/wc/league/12,soccer/euro/league/13,soccer/wwc/league/14,soccer/nwsl/league/20,soccer/cwc/league/26,soccer/gold_cup/league/32,soccer/unl/league/67"
+        },
+        {
+          "name": "Sky Sports",
+          "url": "https://www.skysports.com/sitemap_news_football.xml"
+        },
+        {
+          "name": "The Guardian",
+          "url": "https://www.theguardian.com/football/rss"
+        },
+        {
+          "name": "TalkSport",
+          "url": "https://talksport.com/football/feed/"
+        },
+        {
+          "name": "Transfermarkt",
+          "url": "https://www.transfermarkt.co.uk/rss/news"
+        }
+      ]
+    },
+    {
+      "id": "market",
+      "name": "Market",
+      "feeds": [
+        {
+          "name": "CNBC",
+          "url": "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114"
+        },
+        {
+          "name": "Investing.com",
+          "url": "https://www.investing.com/rss/news.rss"
+        },
+        {
+          "name": "InvestingLive",
+          "url": "https://investinglive.com/feed/news/"
+        },
+        {
+          "name": "Wall Street Journal",
+          "url": "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain"
+        }
+      ]
+    },
+    {
+      "id": "tech",
+      "name": "Tech",
+      "feeds": [
+        {
+          "name": "Ars Technica",
+          "url": "https://feeds.arstechnica.com/arstechnica/index"
+        },
+        {
+          "name": "CBS News",
+          "url": "https://www.cbsnews.com/latest/rss/technology"
+        },
+        {
+          "name": "MIT Technology Review",
+          "url": "https://www.technologyreview.com/feed/"
+        },
+        {
+          "name": "Tech Crunch",
+          "url": "https://techcrunch.com/feed/"
+        },
+        {
+          "name": "The Verge",
+          "url": "https://www.theverge.com/rss/index.xml"
+        },
+        {
+          "name": "Wired",
+          "url": "https://www.wired.com/feed/rss"
+        }
+      ]
+    },
+    {
       "id": "world",
       "name": "World",
       "feeds": [
@@ -117,80 +207,12 @@
           "url": "https://timesofindia.indiatimes.com/rssfeeds/296589292.cms"
         },
         {
+          "name": "Wall Street Journal",
+          "url": "https://feeds.content.dowjones.io/public/rss/RSSWorldNews"
+        },
+        {
           "name": "Washington Post",
           "url": "https://feeds.washingtonpost.com/rss/world"
-        }
-      ]
-    },
-    {
-      "id": "tech",
-      "name": "Tech",
-      "feeds": [
-        {
-          "name": "Ars Technica",
-          "url": "https://feeds.arstechnica.com/arstechnica/index"
-        },
-        {
-          "name": "CBS News",
-          "url": "https://www.cbsnews.com/latest/rss/technology"
-        },
-        {
-          "name": "MIT Technology Review",
-          "url": "https://www.technologyreview.com/feed/"
-        },
-        {
-          "name": "Tech Crunch",
-          "url": "https://techcrunch.com/feed/"
-        },
-        {
-          "name": "The Verge",
-          "url": "https://www.theverge.com/rss/index.xml"
-        },
-        {
-          "name": "Wired",
-          "url": "https://www.wired.com/feed/rss"
-        }
-      ]
-    },
-    {
-      "id": "football",
-      "name": "Football",
-      "feeds": [
-        {
-          "name": "BBC",
-          "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"
-        },
-        {
-          "name": "CBS Sports",
-          "url": "https://www.cbssports.com/rss/headlines/soccer/"
-        },
-        {
-          "name": "Daily Mail",
-          "url": "https://www.dailymail.com/sport/football/articles.rss"
-        },
-        {
-          "name": "ESPN",
-          "url": "https://www.espn.com/espn/rss/soccer/news"
-        },
-        {
-          "name": "Fox Sports",
-          "url": "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=fs/soccer,soccer/epl/league/1,soccer/mls/league/5,soccer/ucl/league/7,soccer/europa/league/8,soccer/wc/league/12,soccer/euro/league/13,soccer/wwc/league/14,soccer/nwsl/league/20,soccer/cwc/league/26,soccer/gold_cup/league/32,soccer/unl/league/67"
-        },
-        {
-          "name": "Sky Sports",
-          "url": "https://www.skysports.com/sitemap_news_football.xml"
-        },
-        {
-          "name": "The Guardian",
-          "url": "https://www.theguardian.com/football/rss"
-        },
-        {
-          "name": "TalkSport",
-          "url": "https://talksport.com/football/feed/"
-        },
-        {
-          "name": "Transfermarkt",
-          "url": "https://www.transfermarkt.co.uk/rss/news"
         }
       ]
     }

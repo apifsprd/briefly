@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -67,6 +68,17 @@ export default function page() {
           </div>
         </header>
       </article>
+
+      <div className="relative w-full h-32 sm:h-48 md:h-64 overflow-hidden mt-8">
+        <Image
+          src="/images/header-banner.png"
+          alt="Briefly Special Announcement"
+          fill
+          priority
+          className="object-contain object-center"
+          sizes="100vw"
+        />
+      </div>
     </section>
   );
 }

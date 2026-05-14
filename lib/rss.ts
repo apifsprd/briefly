@@ -1,5 +1,6 @@
 import Parser from "rss-parser";
 import rssData from "@/data/rss.json";
+import { validateImageUrl } from "./utils";
 
 const parser = new Parser();
 
@@ -19,6 +20,18 @@ export interface RssFeed {
     isoDate: string;
     image?: string;
   }[];
+}
+
+export interface RssItemNotSeparated {
+  title: string;
+  link: string;
+  description: string;
+  pubDate: string;
+  isoDate: string;
+  image?: string;
+  publisher: string;
+  publisherImage: string;
+  publisherUrl: string;
 }
 
 const extractImageFromItem = (item: any): string | undefined => {
@@ -69,6 +82,28 @@ const extractImageFromItem = (item: any): string | undefined => {
   return undefined;
 };
 
+const convertPubDateToIsoDate = (pubDate: string): string => {
+  try {
+    // If pubDate is empty or undefined, return current date in ISO format
+    if (!pubDate) {
+      return new Date().toISOString();
+    }
+
+    // Convert to Date object and then to ISO string
+    const date = new Date(pubDate);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return new Date().toISOString();
+    }
+
+    return date.toISOString();
+  } catch (error) {
+    console.error(`Error converting pubDate "${pubDate}" to ISO date:`, error);
+    return new Date().toISOString();
+  }
+};
+
 const mainUrl = (url: string) => {
   return new URL(url).origin;
 };
@@ -91,6 +126,7 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
     results.forEach((result) => {
       if (result.status === "fulfilled" && result.value) {
         const { result: feed, feedName } = result.value;
+
         sites.push({
           meta: {
             publisher: feedName || "Unknown Source",
@@ -104,8 +140,12 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
           items: (
             feed.items
               ?.sort((a, b) => {
-                const dateB = new Date(b.isoDate ?? "").getTime();
-                const dateA = new Date(a.isoDate ?? "").getTime();
+                const dateB = new Date(
+                  b.isoDate ?? convertPubDateToIsoDate(b.pubDate || ""),
+                ).getTime();
+                const dateA = new Date(
+                  a.isoDate ?? convertPubDateToIsoDate(a.pubDate || ""),
+                ).getTime();
                 return dateB - dateA;
               })
               .slice(0, 5) || []
@@ -115,7 +155,8 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
             description:
               item.description || item.summary || item.contentSnippet,
             pubDate: item.pubDate || "",
-            isoDate: item.isoDate || new Date().toISOString(),
+            isoDate:
+              item.isoDate || convertPubDateToIsoDate(item.pubDate || ""),
             image: extractImageFromItem(item),
           })),
         });
@@ -144,53 +185,64 @@ export async function getLatestFeedFromAllSources() {
 
     const response = await Promise.allSettled(feedPromises);
 
-    const sites: RssFeed[] = [];
+    // Get latest item from each feed
+    const allItems: Array<{
+      title: string;
+      link: string;
+      description: string;
+      pubDate: string;
+      isoDate: string;
+      image?: string;
+      publisher: string;
+      publisherImage: string;
+      publisherUrl: string;
+    }> = [];
 
     response.forEach((result) => {
       if (result.status === "fulfilled" && result.value) {
         const { result: feed, feedName } = result.value;
-        const items = (
-          feed.items
-            ?.sort((a, b) => {
-              const dateB = new Date(b.isoDate ?? "").getTime();
-              const dateA = new Date(a.isoDate ?? "").getTime();
-              return dateB - dateA;
-            })
-            .slice(0, 1) || []
-        ).map((item) => ({
-          title: item.title || "No title",
-          link: item.link || "#",
-          description:
-            item.description || item.summary || item.contentSnippet || "",
-          pubDate: item.pubDate || "",
-          isoDate: item.isoDate || new Date().toISOString(),
-          image: extractImageFromItem(item),
-        }));
 
-        if (items.length > 0) {
-          sites.push({
-            meta: {
-              publisher: feedName || "Unknown Source",
-              image:
-                feed.image?.url ||
-                `https://ui-avatars.com/api/?name=${feedName || "Briefly"}&background=random&length=${feedName.split(" ").length}`,
-              url: mainUrl(feed?.link || "") || "",
-            },
-            items,
+        // Take only the first item (already sorted by feed parser)
+        const latestItem = feed.items?.[0];
+
+        if (latestItem) {
+          allItems.push({
+            title: latestItem.title || "No title",
+            link: latestItem.link || "#",
+            description:
+              latestItem.description ||
+              latestItem.summary ||
+              latestItem.contentSnippet ||
+              "",
+            pubDate: latestItem.pubDate || "",
+            isoDate:
+              latestItem.isoDate ||
+              convertPubDateToIsoDate(latestItem.pubDate || ""),
+            image: extractImageFromItem(latestItem),
+            publisher: feedName || "Unknown Source",
+            publisherImage:
+              feed.image?.url ||
+              `https://ui-avatars.com/api/?name=${feedName || "Briefly"}&background=random&length=${feedName.split(" ").length}`,
+            publisherUrl: mainUrl(feed?.link || "") || "",
           });
         }
       }
     });
 
-    // Sort by latest isoDate (descending - newest first)
-    const sortedByLatestItem = sites.sort((a, b) => {
-      const dateB = new Date(b.items[0]?.isoDate ?? 0).getTime();
-      const dateA = new Date(a.items[0]?.isoDate ?? 0).getTime();
+    // Sort globally by isoDate (newest first)
+    const sortedItems = allItems.sort((a, b) => {
+      const dateB = new Date(
+        b.isoDate ?? convertPubDateToIsoDate(b.pubDate || ""),
+      ).getTime();
+      const dateA = new Date(
+        a.isoDate ?? convertPubDateToIsoDate(a.pubDate || ""),
+      ).getTime();
       return dateB - dateA;
     });
 
-    const hero = sortedByLatestItem.slice(0, 4);
-    const aside = sortedByLatestItem.slice(4, 10);
+    // Split into hero (4) and aside (6)
+    const hero = sortedItems.slice(0, 4);
+    const aside = sortedItems.slice(4, 10);
 
     return { hero, aside };
   } catch (error) {
@@ -199,4 +251,73 @@ export async function getLatestFeedFromAllSources() {
   }
 }
 
-export async function getLatestFeedPerCategory() {}
+export async function getLatestNewsFromAllCategories() {
+  try {
+    const categoryPromises = rssData.categories.map((category) =>
+      getRssFeed({ category: category.id }).then((feeds) => ({
+        categoryId: category.id,
+        categoryName: category.name,
+        feeds,
+      })),
+    );
+
+    const results = await Promise.allSettled(categoryPromises);
+
+    const categorizedFeeds: Record<
+      string,
+      {
+        name: string;
+        items: {
+          title: string;
+          link: string;
+          description: string;
+          pubDate: string;
+          isoDate: string;
+          image?: string;
+          publisher: string;
+          publisherImage: string;
+          publisherUrl: string;
+        }[];
+      }
+    > = {};
+
+    results.forEach((result) => {
+      if (result.status === "fulfilled" && result.value) {
+        const { categoryId, categoryName, feeds } = result.value;
+
+        // Flatten all items from all feeds in this category
+        const allItems = feeds.flatMap((feed) =>
+          feed.items.map((item) => ({
+            ...item,
+            publisher: feed.meta.publisher,
+            publisherImage: feed.meta.image,
+            publisherUrl: feed.meta.url,
+          })),
+        );
+
+        // Sort by isoDate (newest first) and get top 5
+        const topItems = allItems
+          .sort((a, b) => {
+            const dateB = new Date(
+              b.isoDate ?? convertPubDateToIsoDate(b.pubDate || ""),
+            ).getTime();
+            const dateA = new Date(
+              a.isoDate ?? convertPubDateToIsoDate(a.pubDate || ""),
+            ).getTime();
+            return dateB - dateA;
+          })
+          .slice(0, 5);
+
+        categorizedFeeds[categoryId] = {
+          name: categoryName,
+          items: topItems,
+        };
+      }
+    });
+
+    return categorizedFeeds;
+  } catch (error) {
+    console.error("Error fetching latest news from all categories:", error);
+    return {};
+  }
+}
