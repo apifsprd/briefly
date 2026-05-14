@@ -25,7 +25,7 @@ export default function page() {
       <Giscus
         id="comments"
         repo="apifsprd/briefly" // Ganti dengan repo Anda
-        repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID} // Dapatkan dari giscus.app
+        repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID || ""} // Dapatkan dari giscus.app
         category={process.env.NEXT_PUBLIC_GISCUS_CATEGORY} // Kategori diskusi di GitHub
         categoryId={process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID} // Dapatkan dari giscus.app
         mapping="pathname" // Komentar akan berbeda di setiap URL/halaman
