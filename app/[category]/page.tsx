@@ -81,6 +81,19 @@ export default async function CategoryPage({ params }: PageProps) {
                     {dayjs(news.isoDate).fromNow()}
                   </time>
                 </div>
+                {
+                  // if image is available, show it
+                  news.image && (
+                    <Image
+                      src={news.image}
+                      alt={news.title}
+                      width={100}
+                      height={100}
+                      className="object-cover object-center"
+                      sizes="(max-width: 640px) 56px, (max-width: 768px) 64px, 72px"
+                    />
+                  )
+                }
               </article>
             ))}
           </div>
