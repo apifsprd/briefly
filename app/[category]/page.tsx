@@ -73,7 +73,7 @@ export default async function CategoryPage({ params }: PageProps) {
                       dangerouslySetInnerHTML={{
                         __html: cleanTitle(news.title) || "",
                       }}
-                      className="font-medium leading-snug text-sm sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer capitalize tracking-normal "
+                      className="font-medium leading-snug text-sm sm:text-sm md:text-base text-gray-900 group-hover:text-blue-600 transition-colors duration-300 cursor-pointer capitalize tracking-normal line-clamp-3"
                     />
                   </Link>
 
