@@ -53,6 +53,10 @@
       "name": "Football",
       "feeds": [
         {
+          "name": "90min",
+          "url" : "https://www.90min.com/posts.rss"
+        },
+        {
           "name": "BBC",
           "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"
         },
