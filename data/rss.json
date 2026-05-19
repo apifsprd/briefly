@@ -57,6 +57,10 @@
           "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"
         },
         {
+          "name": "Bulinews.com",
+          "url": "https://bulinews.com/rss.xml"
+        },
+        {
           "name": "CBS Sports",
           "url": "https://www.cbssports.com/rss/headlines/soccer/"
         },
