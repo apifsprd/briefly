@@ -125,16 +125,6 @@ Want to contribute a new RSS feed to Briefly? Great! Please ensure the following
 
 ---
 
-## 💝 Support This Project
-
-If you find Briefly useful and want to support its development, consider making a donation:
-
-**[Donate via PayPal](https://paypal.me/apifsprd)**
-
-Your support helps maintain this project and keep it free and open-source for everyone.
-
----
-
 ## �📜 Ethical Extraction Policy
 
 Briefly is built on the principle that **content creators deserve respect**. This means:
