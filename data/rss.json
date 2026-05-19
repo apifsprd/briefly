@@ -65,6 +65,10 @@
           "url": "https://www.cbssports.com/rss/headlines/soccer/"
         },
         {
+          "name": "Cult Of Calcio",
+          "url": "https://cultofcalcio.com/feed/"
+        },
+        {
           "name": "Daily Mail",
           "url": "https://www.dailymail.com/sport/football/articles.rss"
         },
