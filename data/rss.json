@@ -198,6 +198,10 @@
           "name": "NY Times",
           "url": "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml"
         },
+{
+"name": "RT",
+"url": "https://www.rt.com/rss/news/"
+},
         {
           "name": "Sky News",
           "url": "https://feeds.skynews.com/feeds/rss/world.xml"
