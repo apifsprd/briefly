@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { version } from "@/package.json";
+import { Bookmark, Search, TrendingUp } from "lucide-react";
 
 export function SecondaryNav() {
   const pathname = usePathname();
@@ -18,6 +19,34 @@ export function SecondaryNav() {
         <ul className="hidden sm:flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium text-gray-500">
           <li>
             <Link
+              href="/search"
+              aria-label="Search stories"
+              className={`inline-flex items-center gap-1 transition-colors duration-300 ${pathname === "/search" ? "text-black" : "hover:text-black"}`}
+            >
+              <Search size={16} aria-hidden="true" />
+              Search
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/trending"
+              className={`inline-flex items-center gap-1 transition-colors duration-300 ${pathname === "/trending" ? "text-black" : "hover:text-black"}`}
+            >
+              <TrendingUp size={16} aria-hidden="true" />
+              Trending
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/saved"
+              className={`inline-flex items-center gap-1 transition-colors duration-300 ${pathname === "/saved" ? "text-black" : "hover:text-black"}`}
+            >
+              <Bookmark size={16} aria-hidden="true" />
+              Saved
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/about"
               className={`transition-colors duration-300  ${
                 pathname === "/about"
@@ -28,7 +57,7 @@ export function SecondaryNav() {
               About
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               href="/guestbook"
               className={`transition-colors duration-300  ${
@@ -48,7 +77,7 @@ export function SecondaryNav() {
             >
               v{version}
             </a>
-          </li>
+          </li> */}
         </ul>
 
         {/* Mobile Menu Button */}
@@ -109,6 +138,33 @@ export function SecondaryNav() {
             <ul className="space-y-3 text-sm font-medium text-gray-500">
               <li>
                 <Link
+                  href="/search"
+                  onClick={closeModal}
+                  className="flex items-center gap-2 hover:text-black"
+                >
+                  <Search size={16} aria-hidden="true" /> Search
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/trending"
+                  onClick={closeModal}
+                  className="flex items-center gap-2 hover:text-black"
+                >
+                  <TrendingUp size={16} aria-hidden="true" /> Trending
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/saved"
+                  onClick={closeModal}
+                  className="flex items-center gap-2 hover:text-black"
+                >
+                  <Bookmark size={16} aria-hidden="true" /> Saved
+                </Link>
+              </li>
+              {/* <li>
+                <Link
                   href="/about"
                   onClick={closeModal}
                   className={`block transition-colors duration-300 ${
@@ -140,9 +196,9 @@ export function SecondaryNav() {
                   rel="noopener noreferrer"
                   onClick={closeModal}
                 >
-                  v0.6.1-beta
+                  v{version}
                 </a>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

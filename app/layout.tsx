@@ -24,9 +24,9 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Briefly - Your Daily Brief. Straight From the Sources.",
+  title: "Briefly - Understand the news, not just read the news.",
   description:
-    "The official RSS-based global news aggregator. Curated sources, leading media outlets, and no distractions. World news is now more concise with Briefly.",
+    "Follow developing stories across trusted publishers, compare coverage, and read directly from the original source.",
   keywords: [
     "News",
     "Aggregator",

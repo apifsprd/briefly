@@ -1,8 +1,7 @@
 import Parser from "rss-parser";
 import rssData from "@/data/rss.json";
-import { validateImageUrl } from "./utils";
 
-const parser = new Parser();
+const parser = new Parser({ timeout: 10000 });
 
 export interface RssFeed {
   meta: {
@@ -32,87 +31,114 @@ export interface RssItemNotSeparated {
   publisher: string;
   publisherImage: string;
   publisherUrl: string;
+  category?: string;
 }
 
-const extractImageFromItem = (item: any): string | undefined => {
-  // 1. Check enclosures (media attachments)
-  if (item.enclosures && item.enclosures.length > 0) {
-    const imageEnclosure = item.enclosures.find(
-      (enc: any) => enc.type && enc.type.startsWith("image/"),
+type FeedCacheEntry = { expiresAt: number; value: Promise<RssFeed[]> };
+const globalForRss = globalThis as typeof globalThis & {
+  brieflyFeedCache?: Map<string, FeedCacheEntry>;
+};
+const feedCache = (globalForRss.brieflyFeedCache ??= new Map<
+  string,
+  FeedCacheEntry
+>());
+const feedCacheDuration = 60 * 60 * 1000;
+
+type FeedRecord = Record<string, unknown>;
+
+const asRecord = (value: unknown): FeedRecord | undefined =>
+  typeof value === "object" && value !== null
+    ? (value as FeedRecord)
+    : undefined;
+
+const safeImageUrl = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? value
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const extractImageFromItem = (item: unknown): string | undefined => {
+  const record = asRecord(item);
+  if (!record) return undefined;
+
+  const enclosures = Array.isArray(record.enclosures) ? record.enclosures : [];
+  const enclosure = enclosures
+    .map(asRecord)
+    .find(
+      (value) =>
+        typeof value?.type === "string" &&
+        value.type.startsWith("image/") &&
+        typeof value.url === "string",
     );
-    if (imageEnclosure?.url) {
-      return imageEnclosure.url;
-    }
-  }
+  const enclosureUrl = safeImageUrl(enclosure?.url);
+  if (enclosureUrl) return enclosureUrl;
 
-  // 2. Check media namespace (media:content, media:thumbnail)
-  if (item.media) {
-    if (item.media.content && Array.isArray(item.media.content)) {
-      const imageMedia = item.media.content.find(
-        (content: any) => content.medium === "image",
-      );
-      if (imageMedia?.url) {
-        return imageMedia.url;
-      }
-    }
-    if (item.media.thumbnail && Array.isArray(item.media.thumbnail)) {
-      return item.media.thumbnail[0]?.url;
-    }
-  }
+  const media = asRecord(record.media);
+  const content = Array.isArray(media?.content) ? media.content : [];
+  const mediaImage = content
+    .map(asRecord)
+    .find(
+      (value) => value?.medium === "image" && typeof value.url === "string",
+    );
+  const mediaUrl = safeImageUrl(mediaImage?.url);
+  if (mediaUrl) return mediaUrl;
 
-  // 3. Parse image from HTML description
-  if (item.description || item.content) {
-    const htmlContent = item.description || item.content;
-    const imgRegex = /<img[^>]+src=["']([^"']+)["']/;
-    const match = htmlContent.match(imgRegex);
-    if (match && match[1]) {
-      return match[1];
-    }
-  }
+  const thumbnails = Array.isArray(media?.thumbnail) ? media.thumbnail : [];
+  const thumbnail = asRecord(thumbnails[0]);
+  const thumbnailUrl = safeImageUrl(thumbnail?.url);
+  if (thumbnailUrl) return thumbnailUrl;
 
-  // 4. Check content:encoded (Wordpress RSS)
-  if (item["content:encoded"]) {
-    const imgRegex = /<img[^>]+src=["']([^"']+)["']/;
-    const match = item["content:encoded"].match(imgRegex);
-    if (match && match[1]) {
-      return match[1];
-    }
-  }
-
-  return undefined;
+  const description =
+    typeof record.description === "string"
+      ? record.description
+      : typeof record.content === "string"
+        ? record.content
+        : typeof record["content:encoded"] === "string"
+          ? record["content:encoded"]
+          : "";
+  const match = description.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return safeImageUrl(match?.[1]);
 };
 
 const convertPubDateToIsoDate = (pubDate: string): string => {
   try {
-    // If pubDate is empty or undefined, return current date in ISO format
-    if (!pubDate) {
-      return new Date().toISOString();
-    }
+    if (!pubDate) return "";
 
     // Convert to Date object and then to ISO string
     const date = new Date(pubDate);
 
-    // Check if date is valid
-    if (isNaN(date.getTime())) {
-      return new Date().toISOString();
-    }
+    if (Number.isNaN(date.getTime())) return "";
 
     return date.toISOString();
   } catch (error) {
     console.error(`Error converting pubDate "${pubDate}" to ISO date:`, error);
-    return new Date().toISOString();
+    return "";
   }
 };
 
 const mainUrl = (url: string) => {
-  return new URL(url).origin;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "";
+  }
 };
 
-export async function getRssFeed({ category = "world" }: { category: string }) {
+const publisherImage = (image: string | undefined, name: string) =>
+  safeImageUrl(image) ||
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "Briefly")}&background=random&length=${(name || "Briefly").split(" ").length}`;
+
+async function fetchRssFeed({ category }: { category: string }) {
   try {
     const feeds =
       rssData.categories.find((c) => c.id === category)?.feeds || [];
-    const sortedFeeds = feeds.sort((a, b) => a.name.localeCompare(b.name));
+    const sortedFeeds = [...feeds].sort((a, b) => a.name.localeCompare(b.name));
 
     const feedPromises = sortedFeeds.map((feed) =>
       parser
@@ -130,9 +156,7 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
         sites.push({
           meta: {
             publisher: feedName || "Unknown Source",
-            image:
-              feed.image?.url ||
-              `https://ui-avatars.com/api/?name=${feedName || "Briefly"}&background=random&length=${feedName.split(" ").length}`,
+            image: publisherImage(feed.image?.url, feedName),
             pubDate: feed.pubDate || "",
             desc: feed.description || feed.title || "",
             url: mainUrl(feed?.link || "") || "",
@@ -148,7 +172,7 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
                 ).getTime();
                 return dateB - dateA;
               })
-              .slice(0, 5) || []
+              .slice(0, 12) || []
           ).map((item) => ({
             title: item.title || "No title",
             link: item.link || "#",
@@ -168,6 +192,23 @@ export async function getRssFeed({ category = "world" }: { category: string }) {
     console.error(`Error fetching RSS feed for category '${category}':`, error);
     return [];
   }
+}
+
+export async function getRssFeed({ category = "world" }: { category: string }) {
+  const cached = feedCache.get(category);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+
+  const value = fetchRssFeed({ category });
+  feedCache.set(category, {
+    expiresAt: Date.now() + feedCacheDuration,
+    value,
+  });
+
+  const feeds = await value;
+  if (feeds.length === 0 && feedCache.get(category)?.value === value) {
+    feedCache.delete(category);
+  }
+  return feeds;
 }
 
 export async function getLatestFeedFromAllSources() {
@@ -220,9 +261,7 @@ export async function getLatestFeedFromAllSources() {
               convertPubDateToIsoDate(latestItem.pubDate || ""),
             image: extractImageFromItem(latestItem),
             publisher: feedName || "Unknown Source",
-            publisherImage:
-              feed.image?.url ||
-              `https://ui-avatars.com/api/?name=${feedName || "Briefly"}&background=random&length=${feedName.split(" ").length}`,
+            publisherImage: publisherImage(feed.image?.url, feedName),
             publisherUrl: mainUrl(feed?.link || "") || "",
           });
         }
@@ -249,6 +288,29 @@ export async function getLatestFeedFromAllSources() {
     console.error("Error fetching RSS feed:", error);
     return { hero: [], aside: [] };
   }
+}
+
+export async function getAllArticlesFromAllCategories() {
+  const results = await Promise.allSettled(
+    rssData.categories.map(async (category) => ({
+      category: category.id,
+      feeds: await getRssFeed({ category: category.id }),
+    })),
+  );
+
+  return results.flatMap((result) =>
+    result.status === "fulfilled"
+      ? result.value.feeds.flatMap((feed) =>
+          feed.items.map((item) => ({
+            ...item,
+            publisher: feed.meta.publisher,
+            publisherImage: feed.meta.image,
+            publisherUrl: feed.meta.url,
+            category: result.value.category,
+          })),
+        )
+      : [],
+  );
 }
 
 export async function getLatestNewsFromAllCategories() {
