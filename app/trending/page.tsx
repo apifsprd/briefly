@@ -10,15 +10,15 @@ export default async function TrendingPage() {
 
   return (
     <main>
-      <header className="mb-7 border-b border-gray-300 pb-5">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-blue-800">
-          Coverage activity
-        </p>
-        <h1 className="text-3xl font-semibold">Trending stories</h1>
-        <p className="mt-2 max-w-2xl text-sm text-gray-600">
-          Ranked by recency and the number of independent articles and
-          publishers in the current feeds. This is a coverage signal, not an
-          importance rating.
+      <header className="mb-7 border-b border-slate-200 pb-5">
+        <p className="eyebrow text-slate-500">Coverage activity</p>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-5xl">
+          Trending stories
+        </h1>
+        <p className="mt-3 max-w-2xl text-base text-slate-600">
+          Ranked by recency and how many independent publishers are covering the
+          same story. This is a signal of attention, not a judgment on
+          importance.
         </p>
       </header>
       <StoryCollection

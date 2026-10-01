@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  /* Colors */
-  --background: #fafafa;
-  --foreground: #171717;
-  --text-muted: #64748b;
-
-  /* Line Height */
-  --lh-body: 1.625;
-  --lh-heading: 1.2;
+  --background: #f6f5f1;
+  --foreground: #111827;
+  --muted: #5b6472;
+  --panel: #ffffff;
+  --panel-alt: #f3f4f6;
+  --line: #e2e8f0;
+  --accent: #0f172a;
+  --accent-soft: #e2e8f0;
+  --shadow-soft: 0 20px 45px -28px rgba(15, 23, 42, 0.28);
+  --lh-body: 1.6;
+  --lh-heading: 1.1;
 }
 
 @theme inline {
@@ -20,28 +23,41 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --text-muted: #94a3b8;
+    --background: #0f172a;
+    --foreground: #f8fafc;
+    --muted: #94a3b8;
+    --panel: #111827;
+    --panel-alt: #1e293b;
+    --line: #334155;
+    --accent: #f8fafc;
+    --accent-soft: #0f172a;
   }
 }
 
-/* --- Base Typography Setup --- */
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+
   html {
     @apply scroll-smooth;
     font-size: 16px;
-    -webkit-text-size-adjust: 100%; /* Mencegah font auto-resize di mobile */
+    -webkit-text-size-adjust: 100%;
+    background: var(--background);
   }
 
   body {
-    @apply font-sans text-black;
+    @apply font-sans text-slate-900 antialiased;
     line-height: var(--lh-body);
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.4),
+        rgba(246, 245, 241, 0.92)
+      ),
+      var(--background);
+    color: var(--foreground);
   }
-
-  /* --- Typography --- */
 
   h1,
   h2,
@@ -49,57 +65,57 @@
   h4,
   h5,
   h6 {
-    @apply font-serif font-bold text-black;
+    @apply font-serif font-semibold tracking-[-0.035em] text-slate-950;
     line-height: var(--lh-heading);
-    /* letter-spacing: -0.02em; */
   }
 
   h1 {
-    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+    @apply text-3xl sm:text-4xl lg:text-5xl;
   }
 
   h2 {
-    @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+    @apply text-2xl sm:text-3xl;
   }
 
   h3 {
-    @apply text-base sm:text-lg md:text-xl;
+    @apply text-xl sm:text-2xl;
   }
 
   p {
-    @apply text-sm sm:text-base text-black leading-relaxed;
+    @apply text-sm leading-relaxed text-slate-600 sm:text-base;
   }
-
-  /* --- Small Text & Metadata --- */
-
-  small,
-  .text-sm {
-    @apply text-sm leading-snug text-black;
-  }
-
-  .text-xs {
-    @apply text-xs uppercase tracking-wide sm:tracking-widest font-semibold text-gray-400;
-  }
-
-  /* --- Link Styling --- */
 
   a {
-    @apply transition-all duration-300 ease-in-out;
+    @apply transition-all duration-200 ease-out;
   }
 
-  a:focus-visible {
-    @apply outline-none ring-2 ring-blue-500 ring-offset-2 rounded-sm;
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  summary:focus-visible {
+    @apply outline-none ring-2 ring-slate-900 ring-offset-2 ring-offset-[var(--background)] rounded-md;
   }
-
-  /* --- Image Defaults --- */
 
   img {
     @apply max-w-full h-auto;
   }
 
-  /* Card */
-
   .card {
-    @apply flex flex-col flex-1 bg-white border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-5;
+    @apply flex flex-col flex-1 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_0_rgba(15,23,42,0.03)] sm:p-5;
+  }
+
+  .eyebrow {
+    @apply text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

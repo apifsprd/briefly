@@ -3,8 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { version } from "@/package.json";
-import { Bookmark, Search, TrendingUp } from "lucide-react";
+import { Bookmark, Menu, Search, Settings2, TrendingUp, X } from "lucide-react";
+
+const navItems = [
+  { href: "/search", label: "Search", icon: Search },
+  { href: "/trending", label: "Trending", icon: TrendingUp },
+  { href: "/saved", label: "Saved", icon: Bookmark },
+  { href: "/settings", label: "Settings", icon: Settings2 },
+];
 
 export function SecondaryNav() {
   const pathname = usePathname();
@@ -14,191 +20,80 @@ export function SecondaryNav() {
 
   return (
     <>
-      <nav aria-label="Secondary Navigation">
-        {/* Desktop Navigation */}
-        <ul className="hidden sm:flex items-center gap-3 sm:gap-6 text-xs sm:text-sm font-medium text-gray-500">
-          <li>
-            <Link
-              href="/search"
-              aria-label="Search stories"
-              className={`inline-flex items-center gap-1 transition-colors duration-300 ${pathname === "/search" ? "text-black" : "hover:text-black"}`}
-            >
-              <Search size={16} aria-hidden="true" />
-              Search
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/trending"
-              className={`inline-flex items-center gap-1 transition-colors duration-300 ${pathname === "/trending" ? "text-black" : "hover:text-black"}`}
-            >
-              <TrendingUp size={16} aria-hidden="true" />
-              Trending
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/saved"
-              className={`inline-flex items-center gap-1 transition-colors duration-300 ${pathname === "/saved" ? "text-black" : "hover:text-black"}`}
-            >
-              <Bookmark size={16} aria-hidden="true" />
-              Saved
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/about"
-              className={`transition-colors duration-300  ${
-                pathname === "/about"
-                  ? "text-black font-medium"
-                  : "hover:text-black"
-              } `}
-            >
-              About
-            </Link>
-          </li>
-          {/* <li>
-            <Link
-              href="/guestbook"
-              className={`transition-colors duration-300  ${
-                pathname === "/guestbook"
-                  ? "text-black font-medium"
-                  : "hover:text-black"
-              } `}
-            >
-              Guestbook
-            </Link>
-          </li>
-          <li className="hidden sm:flex flex-row gap-2 text-gray-400 hover:text-black transition-colors duration-300 lowercase">
-            <a
-              href="https://github.com/apifsprd/briefly"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              v{version}
-            </a>
-          </li> */}
+      <nav aria-label="Secondary navigation" className="hidden sm:block">
+        <ul className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-slate-500 md:gap-3">
+          {navItems.map(({ href, label, icon: Icon }) => {
+            const isActive =
+              pathname === href || pathname.startsWith(href + "/");
+            return (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 transition-colors duration-200 ${
+                    isActive
+                      ? "border-slate-900 bg-slate-900 text-white"
+                      : "border-slate-200 bg-white/80 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+                  }`}
+                >
+                  <Icon size={14} aria-hidden="true" />
+                  <span>{label}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsOpen(true)}
-          className="sm:hidden px-3 py-2 rounded-md text-gray-500 hover:text-black transition-colors duration-300"
-          aria-label="Open menu"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
       </nav>
 
-      {/* Mobile Modal */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white p-2 text-slate-700 hover:border-slate-300 hover:text-slate-900 sm:hidden"
+        aria-label="Open menu"
+      >
+        <Menu size={18} aria-hidden="true" />
+      </button>
+
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 sm:hidden"
+          className="fixed inset-0 z-50 bg-slate-900/20 sm:hidden"
           onClick={closeModal}
           aria-hidden="true"
-        />
-      )}
-      {isOpen && (
-        <div className="absolute top-20 left-0 right-0 z-50 sm:hidden bg-white border border-gray-200 rounded-lg shadow-2xl">
-          <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-medium text-gray-900">Menu</span>
+        >
+          <div
+            className="absolute inset-x-3 top-20 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <span className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Menu
+              </span>
               <button
+                type="button"
                 onClick={closeModal}
-                className="text-gray-500 hover:text-black transition-colors"
+                className="inline-flex items-center justify-center rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                 aria-label="Close menu"
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <X size={16} aria-hidden="true" />
               </button>
             </div>
-            <ul className="space-y-3 text-sm font-medium text-gray-500">
-              <li>
-                <Link
-                  href="/search"
-                  onClick={closeModal}
-                  className="flex items-center gap-2 hover:text-black"
-                >
-                  <Search size={16} aria-hidden="true" /> Search
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/trending"
-                  onClick={closeModal}
-                  className="flex items-center gap-2 hover:text-black"
-                >
-                  <TrendingUp size={16} aria-hidden="true" /> Trending
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/saved"
-                  onClick={closeModal}
-                  className="flex items-center gap-2 hover:text-black"
-                >
-                  <Bookmark size={16} aria-hidden="true" /> Saved
-                </Link>
-              </li>
-              {/* <li>
-                <Link
-                  href="/about"
-                  onClick={closeModal}
-                  className={`block transition-colors duration-300 ${
-                    pathname === "/about"
-                      ? "text-black font-medium"
-                      : "hover:text-black"
-                  }`}
-                >
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guestbook"
-                  onClick={closeModal}
-                  className={`block transition-colors duration-300 ${
-                    pathname === "/guestbook"
-                      ? "text-black font-medium"
-                      : "hover:text-black"
-                  }`}
-                >
-                  Guestbook
-                </Link>
-              </li>
-              <li className="text-gray-400 hover:text-black transition-colors duration-300 lowercase">
-                <a
-                  href="https://github.com/apifsprd/briefly"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={closeModal}
-                >
-                  v{version}
-                </a>
-              </li> */}
+
+            <ul className="space-y-2 text-sm font-medium text-slate-600">
+              {navItems.map(({ href, label, icon: Icon }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    onClick={closeModal}
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2 transition-colors ${
+                      pathname === href || pathname.startsWith(href + "/")
+                        ? "bg-slate-900 text-white"
+                        : "hover:bg-slate-100 hover:text-slate-900"
+                    }`}
+                  >
+                    <Icon size={16} aria-hidden="true" />
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

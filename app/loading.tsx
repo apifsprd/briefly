@@ -3,17 +3,24 @@ export default function Loading() {
     <div
       role="status"
       aria-label="Loading stories"
-      className="animate-pulse motion-reduce:animate-none"
+      className="space-y-6 animate-pulse motion-reduce:animate-none"
     >
-      <span className="sr-only">Loading stories</span>
-      <div className="mb-8 h-32 border-b border-gray-200" />
-      <div className="mb-5 h-7 w-48 bg-gray-200" />
-      <div className="space-y-5">
+      <div className="rounded-[28px] border border-slate-200 bg-white p-5 sm:p-6">
+        <div className="mb-4 h-3 w-32 rounded-full bg-slate-200" />
+        <div className="mb-4 h-12 w-3/4 rounded-full bg-slate-200" />
+        <div className="h-64 w-full rounded-2xl bg-slate-100" />
+      </div>
+
+      <div className="space-y-4">
         {[0, 1, 2, 3].map((row) => (
-          <div key={row} className="border-b border-gray-200 py-5">
-            <div className="mb-3 h-3 w-40 bg-gray-200" />
-            <div className="mb-2 h-6 w-3/4 bg-gray-200" />
-            <div className="h-4 w-full max-w-2xl bg-gray-100" />
+          <div
+            key={row}
+            className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+          >
+            <div className="mb-3 h-3 w-28 rounded-full bg-slate-200" />
+            <div className="mb-3 h-7 w-3/4 rounded-full bg-slate-200" />
+            <div className="h-4 w-full rounded-full bg-slate-100" />
+            <div className="mt-2 h-4 w-2/3 rounded-full bg-slate-100" />
           </div>
         ))}
       </div>

@@ -4,34 +4,35 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const categories = [
-  {
-    label: "Latest",
-    href: "/",
-  },
-  { label: "AI", href: "/ai" },
-  { label: "Business", href: "/business" },
+  { label: "Overview", href: "/" },
+  { label: "Artificial Intelligence", href: "/ai" },
+  { label: "Business & Finance", href: "/business" },
   { label: "Football", href: "/football" },
-  { label: "Market", href: "/market" },
-  { label: "Tech", href: "/tech" },
-  { label: "World", href: "/world" },
+  { label: "Markets", href: "/market" },
+  { label: "Technology", href: "/tech" },
+  { label: "World Affairs", href: "/world" },
+  { label: "Trending Radar", href: "/trending" },
 ];
 
 export function PrimaryNav() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary Navigation">
-      <ul className="w-full flex items-center gap-4 sm:gap-4 md:gap-6 font-normal text-xs sm:text-sm md:text-base text-gray-400 font-poppins tracking-normal whitespace-nowrap">
+    <nav aria-label="Primary navigation">
+      <ul className="flex w-full items-center gap-1.5 overflow-x-auto whitespace-nowrap text-xs font-medium text-slate-600 sm:gap-2">
         {categories.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
+
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`transition-colors duration-300  ${
-                  isActive ? "text-black font-medium" : "hover:text-black"
-                } `}
+                className={`inline-flex rounded-full px-3 py-1.5 transition-colors duration-200 ${
+                  isActive
+                    ? "bg-slate-950 text-white"
+                    : "hover:bg-slate-100 hover:text-slate-900"
+                }`}
               >
                 {item.label}
               </Link>

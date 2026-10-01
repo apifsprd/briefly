@@ -3,7 +3,7 @@
 import { Bookmark, Check, SlidersHorizontal, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Story } from "@/lib/stories";
 
 const bookmarksKey = "briefly-bookmarks";
@@ -40,15 +40,17 @@ const readStoredIds = (key: string): string[] => {
   }
 };
 
-function relativeDate(value: string): string {
+function relativeTime(value: string): string {
   const timestamp = Date.parse(value);
-  if (!Number.isFinite(timestamp)) return "Update time unavailable";
-  const formatted = new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "UTC",
-  }).format(timestamp);
-  return `Updated ${formatted} UTC`;
+  if (!Number.isFinite(timestamp)) return "Updated recently";
+
+  const diffMinutes = Math.max(
+    1,
+    Math.round((Date.now() - timestamp) / 60_000),
+  );
+  if (diffMinutes < 60) return `${diffMinutes} min ago`;
+  if (diffMinutes < 24 * 60) return `${Math.floor(diffMinutes / 60)} hr ago`;
+  return `${Math.floor(diffMinutes / (24 * 60))} day ago`;
 }
 
 export function StoryCollection({
@@ -58,35 +60,35 @@ export function StoryCollection({
   showPreferences = false,
   emptyMessage = "No stories are available right now.",
 }: StoryCollectionProps) {
-  const [bookmarks, setBookmarks] = useState<Story[]>([]);
-  const [readIds, setReadIds] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[] | null>(
-    null,
+  const [bookmarks, setBookmarks] = useState<Story[]>(() =>
+    readStoredStories(),
   );
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    setBookmarks(readStoredStories());
-    setReadIds(readStoredIds(readStoriesKey));
-    try {
-      const stored = JSON.parse(localStorage.getItem(categoriesKey) || "null");
-      if (Array.isArray(stored)) {
-        setSelectedCategories(
-          stored.filter((value): value is string => typeof value === "string"),
+  const [readIds, setReadIds] = useState<string[]>(() =>
+    readStoredIds(readStoriesKey),
+  );
+  const [selectedCategories, setSelectedCategories] = useState<string[] | null>(
+    () => {
+      try {
+        const stored = JSON.parse(
+          localStorage.getItem(categoriesKey) || "null",
         );
+        return Array.isArray(stored)
+          ? stored.filter((value): value is string => typeof value === "string")
+          : null;
+      } catch {
+        return null;
       }
-    } catch {
-      setSelectedCategories(null);
-    }
-    setReady(true);
-  }, []);
+    },
+  );
 
   const categoryOptions = [...new Set(stories.map((story) => story.category))];
   const visibleStories =
     mode === "saved"
-      ? bookmarks.map(
-          (saved) => stories.find((story) => story.id === saved.id) || saved,
-        )
+      ? bookmarks
+          .map(
+            (saved) => stories.find((story) => story.id === saved.id) || saved,
+          )
+          .filter((story) => story)
       : stories.filter(
           (story) =>
             !selectedCategories || selectedCategories.includes(story.category),
@@ -120,158 +122,180 @@ export function StoryCollection({
   return (
     <section className="w-full" aria-label={heading || "Stories"}>
       {(heading || showPreferences) && (
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-gray-300 pb-3">
-          {heading && <h2 className="text-xl font-semibold">{heading}</h2>}
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+          {heading && (
+            <h2 className="text-2xl font-semibold text-slate-900">{heading}</h2>
+          )}
           {showPreferences && categoryOptions.length > 0 && (
             <details className="relative">
-              <summary className="flex cursor-pointer list-none items-center gap-2 rounded-sm px-2 py-1 text-sm text-gray-600 hover:text-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700">
-                <SlidersHorizontal size={16} aria-hidden="true" />
+              <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 hover:border-slate-300 hover:text-slate-900">
+                <SlidersHorizontal size={14} aria-hidden="true" />
                 Editions
               </summary>
-              <fieldset className="absolute right-0 z-20 mt-2 grid min-w-48 gap-2 border border-gray-200 bg-white p-4 shadow-lg">
-                <legend className="text-sm font-semibold">Your editions</legend>
-                {categoryOptions.map((category) => (
-                  <label
-                    key={category}
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={(selectedCategories || categoryOptions).includes(
-                        category,
-                      )}
-                      onChange={() => toggleCategory(category)}
-                      className="accent-blue-700"
-                    />
-                    <span className="capitalize">{category}</span>
-                  </label>
-                ))}
+              <fieldset className="absolute right-0 z-20 mt-2 min-w-52 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-xl">
+                <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  Your editions
+                </legend>
+                <div className="grid gap-2">
+                  {categoryOptions.map((category) => (
+                    <label
+                      key={category}
+                      className="flex cursor-pointer items-center justify-between gap-3 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700"
+                    >
+                      <span className="capitalize">{category}</span>
+                      <input
+                        type="checkbox"
+                        checked={(
+                          selectedCategories || categoryOptions
+                        ).includes(category)}
+                        onChange={() => toggleCategory(category)}
+                        className="h-4 w-4 accent-slate-900"
+                      />
+                    </label>
+                  ))}
+                </div>
               </fieldset>
             </details>
           )}
         </div>
       )}
 
-      {mode === "saved" && !ready ? (
-        <p className="border-y border-gray-200 py-8 text-sm text-gray-500">
-          Loading saved stories…
-        </p>
-      ) : visibleStories.length === 0 ? (
-        <p className="border-y border-gray-200 py-8 text-sm text-gray-500">
-          {mode === "saved" && ready
-            ? "Stories you save will appear here."
-            : emptyMessage}
-        </p>
+      {visibleStories.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white/70 p-8 text-center">
+          <p className="text-base font-medium text-slate-700">
+            {mode === "saved"
+              ? "Stories you save will appear here."
+              : emptyMessage}
+          </p>
+        </div>
       ) : (
-        <div>
-          {visibleStories.map((story, index) => {
+        <div className="space-y-4">
+          {visibleStories.map((story) => {
             const isBookmarked = bookmarks.some(
               (saved) => saved.id === story.id,
             );
             const isRead = readIds.includes(story.id);
             const leadArticle = story.articles[0];
-            const isDeveloping = story.momentum;
+            const sourceLabels = story.articles
+              .slice(0, 4)
+              .map((article) => article.sourceName);
 
             return (
               <article
                 key={story.id}
-                className={`grid grid-cols-1 gap-4 border-b border-gray-200 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start ${isRead ? "opacity-65" : ""}`}
+                className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_0_rgba(15,23,42,0.02)] transition-colors hover:border-slate-300 sm:p-5 ${
+                  isRead ? "opacity-75" : ""
+                }`}
               >
-                <div className="flex min-w-0 gap-4">
-                  {index === 0 && leadArticle.image && (
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  {leadArticle.image && (
                     <Link
                       href={`/story/${story.slug}`}
+                      className="relative block h-32 w-full overflow-hidden rounded-xl bg-slate-100 sm:h-32 sm:w-40"
                       aria-label={`Open story: ${story.title}`}
-                      className="relative hidden h-24 w-32 shrink-0 overflow-hidden bg-gray-100 sm:block"
                     >
                       <Image
                         src={leadArticle.image}
                         alt=""
                         fill
-                        sizes="128px"
-                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, 160px"
+                        className="object-cover transition-transform duration-300 hover:scale-[1.02]"
                         onError={(event) => {
                           event.currentTarget.style.display = "none";
                         }}
                       />
                     </Link>
                   )}
+
                   <div className="min-w-0 flex-1">
-                    <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+                    <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
                       <Link
                         href={`/${story.category}`}
-                        className="text-blue-800 hover:underline"
+                        className="text-slate-700 hover:text-slate-900"
                       >
                         {story.category}
                       </Link>
-                      <span>{story.sourceCount} sources</span>
-                      <span>{relativeDate(story.lastUpdatedAt)}</span>
-                      {isDeveloping && (
-                        <span className="inline-flex items-center gap-1 text-emerald-800">
-                          <TrendingUp size={13} aria-hidden="true" />
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[9px]">
+                        {story.sourceCount} sources
+                      </span>
+                      <span>{relativeTime(story.lastUpdatedAt)}</span>
+                      {story.momentum && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-emerald-700">
+                          <TrendingUp size={11} aria-hidden="true" />
                           Developing
                         </span>
                       )}
                     </div>
-                    <Link href={`/story/${story.slug}`} className="group">
-                      <h3 className="text-lg font-semibold leading-snug text-gray-950 group-hover:text-blue-800 sm:text-xl">
-                        {story.title}
-                      </h3>
-                    </Link>
+
+                    <div className="flex items-start justify-between gap-3">
+                      <Link
+                        href={`/story/${story.slug}`}
+                        className="group flex-1"
+                      >
+                        <h3 className="text-xl font-semibold leading-tight text-slate-900 group-hover:text-slate-700 sm:text-2xl">
+                          {story.title}
+                        </h3>
+                      </Link>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => toggleRead(story.id)}
+                          aria-label={
+                            isRead ? "Mark as unread" : "Mark as read"
+                          }
+                          className="rounded-full border border-slate-200 p-2 text-slate-500 hover:border-slate-300 hover:text-slate-900"
+                          title={isRead ? "Mark as unread" : "Mark as read"}
+                        >
+                          <Check
+                            size={14}
+                            aria-hidden="true"
+                            className={isRead ? "text-emerald-600" : ""}
+                          />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleBookmark(story)}
+                          aria-label={
+                            isBookmarked ? "Remove saved story" : "Save story"
+                          }
+                          className="rounded-full border border-slate-200 p-2 text-slate-500 hover:border-slate-300 hover:text-slate-900"
+                          title={
+                            isBookmarked ? "Remove saved story" : "Save story"
+                          }
+                        >
+                          <Bookmark
+                            size={14}
+                            aria-hidden="true"
+                            fill={isBookmarked ? "currentColor" : "none"}
+                          />
+                        </button>
+                      </div>
+                    </div>
+
                     {leadArticle.description && (
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">
+                      <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-600 sm:text-base">
                         {leadArticle.description}
                       </p>
                     )}
-                    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-500">
-                      {story.articles
-                        .slice(0, 4)
-                        .map((article, sourceIndex) => (
-                          <span key={article.id}>
-                            {sourceIndex > 0 && (
-                              <span aria-hidden="true"> · </span>
-                            )}
-                            <a
-                              href={article.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="hover:text-blue-800 hover:underline"
-                            >
-                              {article.sourceName}
-                            </a>
-                          </span>
-                        ))}
-                      {story.sourceCount > 4 && (
-                        <span>+{story.sourceCount - 4} more</span>
+
+                    <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                      {sourceLabels.map((label, index) => (
+                        <span
+                          key={`${story.id}-${label}-${index}`}
+                          className="inline-flex items-center gap-2"
+                        >
+                          {index > 0 && <span aria-hidden="true">•</span>}
+                          <span>{label}</span>
+                        </span>
+                      ))}
+                      {story.sourceCount > sourceLabels.length && (
+                        <span>
+                          +{story.sourceCount - sourceLabels.length} more
+                        </span>
                       )}
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2 sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => toggleBookmark(story)}
-                    aria-label={
-                      isBookmarked ? "Remove saved story" : "Save story"
-                    }
-                    title={isBookmarked ? "Remove saved story" : "Save story"}
-                    className="rounded-sm p-2 text-gray-600 hover:bg-gray-100 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-blue-700"
-                  >
-                    <Bookmark
-                      size={18}
-                      aria-hidden="true"
-                      fill={isBookmarked ? "currentColor" : "none"}
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleRead(story.id)}
-                    aria-label={isRead ? "Mark as unread" : "Mark as read"}
-                    title={isRead ? "Mark as unread" : "Mark as read"}
-                    className="rounded-sm p-2 text-gray-600 hover:bg-gray-100 hover:text-blue-800 focus-visible:outline-2 focus-visible:outline-blue-700"
-                  >
-                    <Check size={18} aria-hidden="true" />
-                  </button>
                 </div>
               </article>
             );

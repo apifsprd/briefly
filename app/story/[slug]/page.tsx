@@ -10,6 +10,18 @@ interface StoryPageProps {
 
 export const revalidate = 3600;
 
+function relativeTime(value: string): string {
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return "Updated recently";
+  const diffMinutes = Math.max(
+    1,
+    Math.round((Date.now() - timestamp) / 60_000),
+  );
+  if (diffMinutes < 60) return `${diffMinutes} min ago`;
+  if (diffMinutes < 24 * 60) return `${Math.floor(diffMinutes / 60)} hr ago`;
+  return `${Math.floor(diffMinutes / (24 * 60))} day ago`;
+}
+
 function formatPublicationTime(value: string): string {
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp)
@@ -28,7 +40,7 @@ export default async function StoryPage({ params }: StoryPageProps) {
   if (!story) notFound();
 
   const relatedStories = getRelatedStories(story, stories);
-  const descriptions = [
+  const overview = [
     ...new Set(
       story.articles.map((article) => article.description).filter(Boolean),
     ),
@@ -41,143 +53,160 @@ export default async function StoryPage({ params }: StoryPageProps) {
     );
 
   return (
-    <article className="mx-auto max-w-4xl">
-      <Link
-        href={`/${story.category}`}
-        className="text-sm font-medium text-blue-800 hover:underline"
-      >
-        {story.category} edition
-      </Link>
-      <header className="mt-3 border-b border-gray-300 pb-6">
-        <h1 className="text-3xl font-semibold leading-tight sm:text-4xl">
+    <article className="mx-auto max-w-6xl">
+      <div className="mb-5 flex items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <Link
+          href={`/${story.category}`}
+          className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 hover:text-slate-900"
+        >
+          {story.category} edition
+        </Link>
+        <span className="text-xs text-slate-500">
+          {story.sourceCount} sources
+        </span>
+      </div>
+
+      <header className="mb-8">
+        <h1 className="max-w-4xl text-4xl font-semibold text-slate-900 sm:text-5xl">
           {story.title}
         </h1>
-        <p className="mt-3 text-sm text-gray-600">
-          {story.sourceCount} sources · {story.articleCount} articles ·{" "}
-          {formatPublicationTime(story.lastUpdatedAt)}
-        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500">
+          <span>{story.articleCount} articles</span>
+          <span aria-hidden="true">•</span>
+          <span>{relativeTime(story.lastUpdatedAt)}</span>
+        </div>
       </header>
 
-      <section
-        className="border-b border-gray-200 py-6"
-        aria-labelledby="coverage-notes"
-      >
-        <h2 id="coverage-notes" className="text-xl font-semibold">
-          Coverage notes
-        </h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Publisher-provided descriptions, shown as published. Briefly does not
-          generate or infer a summary.
-        </p>
-        {descriptions.length > 0 ? (
-          <ul className="mt-4 space-y-3">
-            {descriptions.map((description) => (
-              <li
-                key={description}
-                className="border-l-2 border-blue-700 pl-4 text-sm leading-relaxed text-gray-800"
-              >
-                {description}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-3 text-sm text-gray-500">
-            No publisher descriptions were included in these feeds.
-          </p>
-        )}
-      </section>
+      <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+        <div className="space-y-8">
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <h2 className="text-2xl font-semibold text-slate-900">
+              Briefly overview
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-slate-600">
+              {overview[0] ||
+                "Publisher coverage is still developing. This story is being tracked across multiple outlets and updated as new reporting arrives."}
+            </p>
+            {overview.length > 1 && (
+              <ul className="mt-5 space-y-3">
+                {overview.slice(1).map((point) => (
+                  <li
+                    key={point}
+                    className="border-l-2 border-slate-300 pl-4 text-sm leading-relaxed text-slate-600"
+                  >
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
-      <section
-        className="border-b border-gray-200 py-6"
-        aria-labelledby="source-comparison"
-      >
-        <h2 id="source-comparison" className="text-xl font-semibold">
-          Source comparison
-        </h2>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-160 border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-gray-300 text-xs uppercase tracking-wide text-gray-500">
-                <th scope="col" className="py-2 pr-4">
-                  Publisher
-                </th>
-                <th scope="col" className="py-2 pr-4">
-                  Headline
-                </th>
-                <th scope="col" className="py-2">
-                  Published
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {story.articles.map((article) => (
-                <tr
-                  key={article.id}
-                  className="border-b border-gray-100 align-top"
-                >
-                  <td className="py-3 pr-4 font-medium">
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <h2 className="text-2xl font-semibold text-slate-900">
+              Key developments
+            </h2>
+            <ul className="mt-4 space-y-3">
+              {story.articles.slice(0, 4).map((article) => (
+                <li key={article.id} className="rounded-xl bg-slate-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                     {article.sourceName}
-                  </td>
-                  <td className="py-3 pr-4">
+                  </p>
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-block text-base font-medium text-slate-900 hover:text-slate-700 hover:underline"
+                  >
+                    {article.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <h2 className="text-2xl font-semibold text-slate-900">Timeline</h2>
+            {timeline.length > 0 ? (
+              <ol className="mt-5 space-y-5 border-l border-slate-200 pl-5">
+                {timeline.map((article) => (
+                  <li key={article.id} className="relative">
+                    <span
+                      className="absolute -left-[1.7rem] top-1.5 h-3 w-3 rounded-full bg-slate-900"
+                      aria-hidden="true"
+                    />
+                    <time
+                      dateTime={article.publishedAt}
+                      className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
+                    >
+                      {formatPublicationTime(article.publishedAt)}
+                    </time>
+                    <p className="mt-1 text-sm font-medium text-slate-800">
+                      {article.sourceName}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-600">
+                      {article.title}
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="mt-4 text-sm text-slate-500">
+                These feeds did not provide publication times.
+              </p>
+            )}
+          </section>
+        </div>
+
+        <aside className="space-y-6">
+          <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+            <h2 className="text-xl font-semibold text-slate-900">Covered by</h2>
+            <ul className="mt-4 space-y-3">
+              {story.articles.map((article) => (
+                <li
+                  key={article.id}
+                  className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 last:border-b-0 last:pb-0"
+                >
+                  <div>
                     <a
                       href={article.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-800 hover:underline"
+                      className="font-medium text-slate-900 hover:text-slate-700 hover:underline"
                     >
-                      {article.title}
+                      {article.sourceName}
                     </a>
-                  </td>
-                  <td className="py-3 text-gray-600">
-                    {formatPublicationTime(article.publishedAt)}
-                  </td>
-                </tr>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {relativeTime(article.publishedAt)}
+                    </p>
+                  </div>
+                  <span className="text-xs text-slate-400">
+                    {article.sourceName}
+                  </span>
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-        {story.topics.length > 0 && (
-          <p className="mt-4 text-xs text-gray-500">
-            Shared headline terms: {story.topics.join(", ")}
-          </p>
-        )}
-      </section>
+            </ul>
+          </section>
 
-      <section
-        className="border-b border-gray-200 py-6"
-        aria-labelledby="story-timeline"
-      >
-        <h2 id="story-timeline" className="text-xl font-semibold">
-          Timeline
-        </h2>
-        {timeline.length > 0 ? (
-          <ol className="mt-4 border-l border-gray-300 pl-5">
-            {timeline.map((article) => (
-              <li key={article.id} className="relative pb-4 last:pb-0">
-                <span
-                  className="absolute -left-6.25 top-1.5 h-2 w-2 rounded-full bg-blue-800"
-                  aria-hidden="true"
-                />
-                <time
-                  dateTime={article.publishedAt}
-                  className="text-xs text-gray-500"
-                >
-                  {formatPublicationTime(article.publishedAt)}
-                </time>
-                <p className="text-sm font-medium">{article.sourceName}</p>
-                <p className="text-sm text-gray-600">{article.title}</p>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="mt-3 text-sm text-gray-500">
-            These feeds did not provide publication times.
-          </p>
-        )}
-      </section>
+          {story.topics.length > 0 && (
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+              <h2 className="text-xl font-semibold text-slate-900">Topics</h2>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {story.topics.map((topic) => (
+                  <span
+                    key={topic}
+                    className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-600"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+        </aside>
+      </div>
 
       {relatedStories.length > 0 && (
-        <div className="pt-6">
+        <div className="mt-10">
           <StoryCollection stories={relatedStories} heading="Related stories" />
         </div>
       )}
