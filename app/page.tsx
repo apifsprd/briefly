@@ -1,342 +1,379 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Flame, TrendingUp } from "lucide-react";
+import Image from "next/image";
+import { Sparkles, TrendingUp, Compass, ArrowRight } from "lucide-react";
 import { getStories, newsCategories } from "@/lib/story-feed";
+import { EditorialLeadSection } from "@/app/components/EditorialLeadSection";
+import { CategoryTabsSection } from "@/app/components/CategoryTabsSection";
+import { NewsletterCallout } from "@/app/components/NewsletterCallout";
 
 export const revalidate = 3600;
 
 function relativeTime(value: string): string {
   const timestamp = Date.parse(value);
-  if (!Number.isFinite(timestamp)) return "Updated recently";
+  if (!Number.isFinite(timestamp)) return "baru saja";
   const diffMinutes = Math.max(
     1,
     Math.round((Date.now() - timestamp) / 60_000),
   );
-  if (diffMinutes < 60) return `${diffMinutes} min ago`;
-  if (diffMinutes < 24 * 60) return `${Math.floor(diffMinutes / 60)} hr ago`;
-  return `${Math.floor(diffMinutes / (24 * 60))} day ago`;
+  if (diffMinutes < 60) return `${diffMinutes}m lalu`;
+  if (diffMinutes < 24 * 60) return `${Math.floor(diffMinutes / 60)}j lalu`;
+  return `${Math.floor(diffMinutes / (24 * 60))}h lalu`;
 }
+
+const categoryColorMap: Record<
+  string,
+  { badge: string; dot: string; text: string }
+> = {
+  football: {
+    badge: "bg-orange-100 text-orange-800",
+    dot: "bg-orange-600",
+    text: "text-orange-700",
+  },
+  world: {
+    badge: "bg-blue-100 text-blue-800",
+    dot: "bg-blue-600",
+    text: "text-blue-700",
+  },
+  market: {
+    badge: "bg-emerald-100 text-emerald-800",
+    dot: "bg-emerald-600",
+    text: "text-emerald-700",
+  },
+  business: {
+    badge: "bg-blue-100 text-blue-800",
+    dot: "bg-blue-600",
+    text: "text-blue-700",
+  },
+  tech: {
+    badge: "bg-amber-100 text-amber-800",
+    dot: "bg-amber-600",
+    text: "text-amber-700",
+  },
+  ai: {
+    badge: "bg-purple-100 text-purple-800",
+    dot: "bg-purple-600",
+    text: "text-purple-700",
+  },
+};
+
+const categoryLabelMap: Record<string, string> = {
+  ai: "Artificial Intelligence",
+  business: "Business & Finance",
+  football: "Football",
+  market: "Markets",
+  tech: "Technology",
+  world: "World Affairs",
+};
+
+const quickFilterChips = [
+  { label: "Trending Terkini", href: "/trending", icon: TrendingUp },
+  { label: "Kecerdasan Buatan (AI)", href: "/ai", icon: Sparkles },
+  { label: "Pasar Saham & Keuangan", href: "/market", icon: Compass },
+  { label: "Teknologi Global", href: "/tech", icon: null },
+  { label: "Dunia Internasional", href: "/world", icon: null },
+  { label: "Sepakbola", href: "/football", icon: null },
+];
 
 export default async function Home() {
   const stories = await getStories();
+
   if (stories.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-        <p className="text-lg font-semibold text-slate-700">
-          No stories are available right now.
+      <div className="rounded-2xl border border-dashed border-editorial-border bg-white p-12 text-center">
+        <p className="font-serif text-2xl font-bold text-editorial-charcoal">
+          Belum ada cerita yang tersedia saat ini.
         </p>
-        <p className="mt-2 text-sm text-slate-500">
-          RSS feeds may be temporarily unavailable.
+        <p className="mt-2 text-sm text-editorial-muted">
+          Feed RSS sedang melakukan sinkronisasi berkala. Silakan muat ulang
+          halaman.
         </p>
       </div>
     );
   }
 
   const featuredStory = stories[0];
-  const latestStories = stories.slice(1, 6);
+  const sidebarStories = stories.slice(1, 5);
   const trendingStories = [...stories]
     .sort((left, right) => right.trendingScore - left.trendingScore)
     .slice(0, 4);
-  const categorySections = newsCategories.map((category) => ({
-    ...category,
-    stories: stories
-      .filter((story) => story.category === category.id)
-      .slice(0, 3),
-  }));
 
-  const leadArticle = featuredStory.articles[0];
+  // Split latest stories into 1 Large Feature Card + 4 Compact Cards
+  const latestFeatureStory = stories[1] || stories[0];
+  const latestCompactStories = stories.slice(2, 6);
+
+  const momentumTopics = [
+    { id: "world", name: "Dunia & Geopolitik" },
+    { id: "market", name: "Pasar & Finansial" },
+    { id: "tech", name: "Teknologi & AI" },
+    { id: "football", name: "Sepakbola & Olahraga" },
+  ].map((item) => {
+    const count = stories.filter(
+      (s) =>
+        s.category === item.id || (item.id === "tech" && s.category === "ai"),
+    ).length;
+    const velocity = Math.min(100, Math.max(68, 68 + count * 5));
+    return { name: item.name, velocity };
+  });
+
+  const channelCategories = newsCategories
+    .map((category) => ({
+      ...category,
+      stories: stories.filter((story) => story.category === category.id),
+    }))
+    .filter((category) => category.stories.length > 0);
 
   return (
-    <div className="space-y-10">
-      <section
-        aria-labelledby="briefly-headline"
-        className="rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_1px_0_rgba(15,23,42,0.03)] sm:p-6 lg:p-8"
+    <div className="space-y-16 lg:space-y-20">
+      {/* Quick Filter Chips Bar */}
+      <div
+        className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 text-xs"
+        aria-label="Quick Topic Filters"
       >
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-4">
-          <p className="eyebrow text-slate-500">The news, in context</p>
+        <span className="text-[11px] font-bold uppercase tracking-wider text-editorial-muted whitespace-nowrap mr-1">
+          Pintasan Topik:
+        </span>
+        {quickFilterChips.map(({ label, href, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-editorial-border/70 text-editorial-body hover:border-editorial-charcoal hover:text-editorial-charcoal hover:bg-neutral-50 transition shadow-2xs whitespace-nowrap font-medium"
+          >
+            {Icon && <Icon size={12} className="text-editorial-accent" />}
+            <span>{label}</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Top Section: Lead Story + The Day in Context Sidebar */}
+      <EditorialLeadSection
+        featuredStory={featuredStory}
+        sidebarStories={sidebarStories}
+        categoryColorMap={categoryColorMap}
+        categoryLabelMap={categoryLabelMap}
+        momentumTopics={momentumTopics}
+      />
+
+      {/* BEGIN: Trending Stories Section */}
+      <section
+        className="space-y-6 pt-2"
+        data-purpose="trending-now-section"
+        id="trending"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-editorial-borderLight pb-3">
+          <div className="flex flex-wrap items-baseline gap-3">
+            <h2 className="font-serif text-2xl font-bold tracking-tight text-editorial-charcoal">
+              Trending Saat Ini
+            </h2>
+            <span className="text-xs text-editorial-muted hidden sm:inline">
+              Diurutkan berdasarkan frekuensi liputan silang media dan kecepatan
+              kabar
+            </span>
+          </div>
           <Link
             href="/trending"
-            className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 hover:text-slate-900"
+            className="text-xs font-bold text-editorial-accent hover:underline uppercase tracking-wider transition"
           >
-            Trending
-            <ArrowRight size={14} aria-hidden="true" />
+            Lihat Semua Trending &rarr;
           </Link>
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_0.9fr]">
-          <article className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-            {leadArticle.image && (
-              <div className="relative h-56 w-full overflow-hidden border-b border-slate-200 bg-slate-100 sm:h-72">
-                <Image
-                  src={leadArticle.image}
-                  alt=""
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 720px"
-                  className="object-cover"
-                />
-              </div>
-            )}
+        {/* 4 Cards Grid with Strong Visual Rank and Source Branding */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {trendingStories.map((story, index) => {
+            const formattedIndex = String(index + 1).padStart(2, "0");
+            const leadItem = story.articles[0];
 
-            <div className="p-5 sm:p-6">
-              <div className="mb-3 flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                <span className="rounded-full border border-slate-200 bg-white px-2 py-1 text-slate-700">
-                  {featuredStory.category}
-                </span>
-                {featuredStory.momentum && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">
-                    <Flame size={11} aria-hidden="true" />
-                    Developing
+            return (
+              <article
+                key={story.id}
+                className="bg-white p-5 sm:p-6 rounded-2xl border border-editorial-border/80 shadow-[0_2px_8px_rgba(20,20,19,0.02)] hover:border-editorial-charcoal/40 hover:-translate-y-1 hover:shadow-md transition-all duration-200 group flex flex-col justify-between"
+              >
+                <div>
+                  {/* Source identification in Top-Left */}
+                  <div className="flex items-center justify-between mb-3.5">
+                    <span className="font-mono text-2xl font-bold text-editorial-accent">
+                      {formattedIndex}
+                    </span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700 bg-neutral-100 px-2 py-0.5 rounded">
+                      {leadItem?.sourceName || "Publisher"}
+                    </span>
+                  </div>
+
+                  <Link href={`/story/${story.slug}`}>
+                    <h3 className="font-serif text-base sm:text-lg font-bold text-editorial-charcoal leading-snug group-hover:text-editorial-accent transition-colors line-clamp-3">
+                      {story.title}
+                    </h3>
+                  </Link>
+                </div>
+
+                <div className="mt-5 pt-3.5 border-t border-editorial-borderLight flex items-center justify-between text-[11px] text-editorial-muted">
+                  <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                    {story.sourceCount} Sumber &bull;{" "}
+                    {relativeTime(story.lastUpdatedAt)}
                   </span>
-                )}
-              </div>
-              <Link href={`/story/${featuredStory.slug}`} className="group">
-                <h1
-                  id="briefly-headline"
-                  className="text-3xl font-semibold leading-tight text-slate-950 group-hover:text-slate-700 sm:text-4xl lg:text-5xl"
-                >
-                  {featuredStory.title}
-                </h1>
-              </Link>
-              {leadArticle.description && (
-                <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
-                  {leadArticle.description}
-                </p>
-              )}
-              <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                {featuredStory.articles.slice(0, 4).map((article, index) => (
                   <span
-                    key={article.id}
-                    className="inline-flex items-center gap-2"
+                    className="text-neutral-400 group-hover:text-editorial-charcoal font-bold transition-colors"
+                    aria-hidden="true"
                   >
-                    {index > 0 && <span aria-hidden="true">•</span>}
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-slate-900 hover:underline"
-                    >
-                      {article.sourceName}
-                    </a>
+                    &rarr;
                   </span>
-                ))}
-                {featuredStory.sourceCount > 4 && (
-                  <span>+{featuredStory.sourceCount - 4} more</span>
-                )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+      {/* END: Trending Stories Section */}
+
+      {/* BEGIN: Latest Stories Stream (Mixed Layout: 1 Large + 4 Compact) */}
+      <section
+        className="space-y-6 pt-2"
+        data-purpose="latest-stories-feed"
+        id="latest"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-editorial-borderLight pb-3">
+          <div className="flex items-center space-x-3">
+            <h2 className="font-serif text-2xl font-bold text-editorial-charcoal">
+              Aliran Berita Terkini
+            </h2>
+            <span className="bg-editorial-charcoal text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+              Live Dispatch
+            </span>
+          </div>
+          <span className="text-xs text-editorial-muted">
+            Pembaruan otomatis berkala &bull; {stories.length} peristiwa aktif
+          </span>
+        </div>
+
+        {/* Dynamic Mixed Layout: 1 Large Card (Left) + 4 Compact Cards Grid (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Left: 1 Large Feature Card */}
+          <article className="lg:col-span-5 bg-white p-6 sm:p-7 rounded-2xl border border-editorial-border/80 shadow-[0_2px_10px_rgba(20,20,19,0.03)] hover:border-editorial-charcoal/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 flex flex-col justify-between group">
+            <div>
+              {/* Source in top left */}
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider bg-editorial-charcoal text-white">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  {latestFeatureStory.articles[0]?.sourceName || "Publisher"}
+                </span>
+                <span className="text-xs font-medium text-editorial-muted">
+                  {relativeTime(latestFeatureStory.lastUpdatedAt)}
+                </span>
               </div>
-              <div className="mt-4 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                Updated {relativeTime(featuredStory.lastUpdatedAt)}
-              </div>
+
+              {/* Optional Thumbnail */}
+              {latestFeatureStory.articles[0]?.image && (
+                <div className="relative mb-4 h-48 w-full overflow-hidden rounded-xl border border-editorial-borderLight bg-editorial-surfaceMuted">
+                  <Image
+                    src={latestFeatureStory.articles[0].image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 420px"
+                    className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                  />
+                </div>
+              )}
+
+              <span className="text-[11px] font-bold uppercase tracking-wider text-orange-700 block mb-1.5">
+                {categoryLabelMap[latestFeatureStory.category] ||
+                  latestFeatureStory.category}
+              </span>
+
+              <Link href={`/story/${latestFeatureStory.slug}`}>
+                <h3 className="font-serif text-xl sm:text-2xl font-bold text-editorial-charcoal group-hover:text-editorial-accent transition-colors mb-3 leading-snug">
+                  {latestFeatureStory.title}
+                </h3>
+              </Link>
+
+              <p className="text-sm text-stone-700 line-clamp-4 leading-relaxed">
+                {latestFeatureStory.articles[0]?.description ||
+                  "Laporan menyeluruh sedang berkembang di berbagai kanal berita global."}
+              </p>
+            </div>
+
+            <div className="pt-4 mt-6 border-t border-editorial-borderLight flex items-center justify-between text-xs">
+              <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                {latestFeatureStory.sourceCount} Sumber Terverifikasi
+              </span>
+              <Link
+                href={`/story/${latestFeatureStory.slug}`}
+                className="font-bold text-editorial-charcoal group-hover:text-editorial-accent inline-flex items-center gap-1 transition"
+              >
+                <span>Baca Selengkapnya</span>
+                <ArrowRight size={13} aria-hidden="true" />
+              </Link>
             </div>
           </article>
 
-          <div className="space-y-4">
-            {latestStories.map((story) => (
-              <article
-                key={story.id}
-                className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-              >
-                <div className="mb-2 flex items-center justify-between gap-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  <span>{story.category}</span>
-                  <span>{relativeTime(story.lastUpdatedAt)}</span>
-                </div>
-                <Link href={`/story/${story.slug}`} className="group">
-                  <h2 className="text-xl font-semibold leading-snug text-slate-950 group-hover:text-slate-700">
-                    {story.title}
-                  </h2>
-                </Link>
-                <p className="mt-2 line-clamp-3 text-sm text-slate-600">
-                  {story.articles[0]?.description ||
-                    "Coverage is developing across multiple outlets."}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* Right: 4 Compact Cards in 2x2 Grid */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {latestCompactStories.map((story) => {
+              const leadItem = story.articles[0];
+              const categoryColor =
+                categoryColorMap[story.category]?.text ||
+                "text-editorial-charcoal";
 
-      <section aria-labelledby="trending-title" className="space-y-5">
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-3">
-          <h2
-            id="trending-title"
-            className="text-2xl font-semibold text-slate-900"
-          >
-            Trending now
-          </h2>
-          <Link
-            href="/trending"
-            className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 hover:text-slate-900"
-          >
-            View all
-          </Link>
-        </div>
+              return (
+                <article
+                  key={story.id}
+                  className="bg-white p-5 rounded-2xl border border-editorial-border/80 shadow-[0_2px_8px_rgba(20,20,19,0.02)] hover:border-editorial-charcoal/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Source in top left */}
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
+                      <span className="font-bold text-xs uppercase tracking-wider text-editorial-charcoal truncate">
+                        {leadItem?.sourceName || "Media Asal"}
+                      </span>
+                      <span className="text-[11px] font-medium text-editorial-muted shrink-0">
+                        {relativeTime(story.lastUpdatedAt)}
+                      </span>
+                    </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <ol className="space-y-3">
-            {trendingStories.map((story, index) => (
-              <li
-                key={story.id}
-                className="rounded-2xl border border-slate-200 bg-white p-4"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <Link href={`/story/${story.slug}`} className="group">
-                      <h3 className="text-lg font-semibold text-slate-900 group-hover:text-slate-700">
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${categoryColor}`}
+                    >
+                      {categoryLabelMap[story.category] || story.category}
+                    </span>
+
+                    <Link href={`/story/${story.slug}`}>
+                      <h4 className="font-serif text-base font-bold text-editorial-charcoal group-hover:text-editorial-accent transition-colors mb-2 leading-snug line-clamp-3">
                         {story.title}
-                      </h3>
+                      </h4>
                     </Link>
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                      <span>{story.sourceCount} sources</span>
-                      <span aria-hidden="true">•</span>
-                      <span>{relativeTime(story.lastUpdatedAt)}</span>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
 
-          <aside className="rounded-2xl border border-slate-200 bg-white p-5">
-            <div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-              <TrendingUp size={14} aria-hidden="true" />
-              Momentum
-            </div>
-            <div className="space-y-4">
-              {stories.slice(0, 4).map((story, index) => {
-                const width = 70 + (index + 1) * 18;
-                return (
-                  <div key={`${story.id}-momentum`}>
-                    <div className="mb-2 flex items-center justify-between gap-2 text-sm text-slate-600">
-                      <span className="capitalize">{story.category}</span>
-                      <span>{Math.min(100, width)}%</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-200">
-                      <div
-                        className="h-full rounded-full bg-slate-900"
-                        style={{ width: `${Math.min(100, width)}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <section
-        id="latest"
-        aria-labelledby="latest-title"
-        className="space-y-5 pt-2"
-      >
-        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-3">
-          <div className="flex flex-wrap items-center gap-3">
-            <h2
-              id="latest-title"
-              className="text-2xl font-semibold text-slate-900"
-            >
-              Latest stories
-            </h2>
-            <span className="rounded bg-slate-950 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-              Latest dispatches
-            </span>
-          </div>
-          <span className="text-xs text-slate-500">
-            Updated {relativeTime(stories[0].lastUpdatedAt)}
-          </span>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {stories.slice(0, 6).map((story) => (
-            <article
-              key={story.id}
-              className="group flex flex-col justify-between rounded-lg border border-slate-200 bg-white p-5 transition-colors hover:border-slate-400"
-            >
-              <div>
-                <div className="mb-2.5 flex items-center justify-between gap-2 text-[11px] text-slate-500">
-                  <span className="font-bold uppercase tracking-wider text-orange-700">
-                    {story.category}
-                  </span>
-                  <span>{relativeTime(story.lastUpdatedAt)}</span>
-                </div>
-                <Link href={`/story/${story.slug}`} className="group/link">
-                  <h3 className="text-lg font-semibold leading-snug text-slate-950 transition-colors group-hover/link:text-orange-700">
-                    {story.title}
-                  </h3>
-                </Link>
-                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-600">
-                  {story.articles[0]?.description ||
-                    "Multiple outlets are following developments in this story."}
-                </p>
-              </div>
-              <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-[11px]">
-                <span className="font-semibold text-slate-900">
-                  {story.articles
-                    .slice(0, 2)
-                    .map((article) => article.sourceName)
-                    .join(" · ")}
-                </span>
-                <span className="shrink-0 text-slate-500">
-                  {story.sourceCount}{" "}
-                  {story.sourceCount === 1 ? "source" : "sources"}
-                </span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-8 pt-2">
-        {categorySections.map((category) => (
-          <div
-            key={category.id}
-            className="rounded-[24px] border border-slate-200 bg-white p-4 sm:p-6"
-          >
-            <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-200 pb-3">
-              <h2 className="text-2xl font-semibold text-slate-900">
-                {category.name}
-              </h2>
-              <Link
-                href={`/${category.id}`}
-                className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 hover:text-slate-900"
-              >
-                See more
-              </Link>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {category.stories.length > 0 ? (
-                category.stories.map((story) => (
-                  <article
-                    key={story.id}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                  >
-                    <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      {story.sourceCount} sources ·{" "}
-                      {relativeTime(story.lastUpdatedAt)}
-                    </div>
-                    <Link href={`/story/${story.slug}`} className="group">
-                      <h3 className="text-lg font-semibold text-slate-900 group-hover:text-slate-700">
-                        {story.title}
-                      </h3>
-                    </Link>
-                    <p className="mt-2 line-clamp-3 text-sm text-slate-600">
-                      {story.articles[0]?.description ||
-                        "Coverage is developing across multiple outlets."}
+                    <p className="text-xs text-stone-600 line-clamp-2 leading-relaxed">
+                      {leadItem?.description ||
+                        "Rangkuman liputan komprehensif dari media terpercaya."}
                     </p>
-                  </article>
-                ))
-              ) : (
-                <p className="text-sm text-slate-500">
-                  No stories available in this edition.
-                </p>
-              )}
-            </div>
+                  </div>
+
+                  <div className="pt-3 mt-3.5 border-t border-editorial-borderLight flex items-center justify-between text-[11px]">
+                    <span className="text-stone-500 font-medium">
+                      {story.sourceCount} Sumber
+                    </span>
+                    <Link
+                      href={`/story/${story.slug}`}
+                      className="font-semibold text-editorial-charcoal group-hover:text-editorial-accent inline-flex items-center gap-1 transition"
+                    >
+                      <span>Rangkuman</span>
+                      <span aria-hidden="true">&rarr;</span>
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-        ))}
+        </div>
       </section>
+      {/* END: Latest Stories Stream */}
+
+      {/* BEGIN: Tabbed Category Feeds (Solusi anti-scroll panjang berulang) */}
+      <CategoryTabsSection
+        categories={channelCategories}
+        allStories={stories}
+        categoryColorMap={categoryColorMap}
+      />
+      {/* END: Tabbed Category Feeds */}
     </div>
   );
 }

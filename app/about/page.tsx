@@ -13,12 +13,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function page() {
+export default function AboutPage() {
   return (
     <section>
-      <article className="w-full max-w-2xl bg-white p-4 sm:p-6 md:p-8 rounded-lg sm:rounded-2xl md:mx-auto border border-gray-200">
-        <header className="mb-8 sm:mb-10 md:mb-12 flex flex-col items-start gap-4 sm:gap-6 md:gap-8">
-          <h1>About Briefly</h1>
+      <article className="mx-auto w-full max-w-3xl rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_10px_rgba(20,20,19,0.03)] sm:p-8 md:p-10">
+        <header className="mb-8 flex flex-col items-start gap-5 sm:mb-10 sm:gap-6">
+          <p className="eyebrow">Our editorial approach</p>
+          <h1 className="font-serif text-4xl font-bold text-editorial-charcoal sm:text-5xl">About Briefly</h1>
           <p className="leading-relaxed tracking-wide">
             In today’s massive information era, keeping up with the news has
             become a daily necessity. But with the social media and AI boom,
@@ -46,7 +47,7 @@ export default function page() {
               href="https://github.com/apifsprd/briefly"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-6 text-blue-500 italic hover:text-blue-800 transition-colors duration-300"
+              className="font-semibold italic text-editorial-accent underline underline-offset-4 transition-colors hover:text-editorial-charcoal"
             >
               https://github.com/apifsprd/briefly
             </a>
@@ -61,7 +62,7 @@ export default function page() {
               href="https://apifsprd.web.id"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-6 text-blue-500 italic hover:text-blue-800 transition-colors duration-300"
+              className="font-semibold italic text-editorial-accent underline underline-offset-4 transition-colors hover:text-editorial-charcoal"
             >
               @apifsprd
             </a>
@@ -69,7 +70,7 @@ export default function page() {
         </header>
       </article>
 
-      <div className="relative w-full h-32 sm:h-48 md:h-64 overflow-hidden mt-8">
+      <div className="relative mx-auto mt-8 h-32 w-full max-w-5xl overflow-hidden rounded-xl border border-editorial-borderLight bg-editorial-surfaceMuted sm:h-48 md:h-64">
         <Image
           src="/images/header-banner.png"
           alt="Briefly Special Announcement"

@@ -14,9 +14,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   return (
     <main>
-      <header className="mb-7 border-b border-slate-200 pb-5">
-        <p className="eyebrow text-slate-500">Search the brief</p>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-900 sm:text-5xl">
+      <header className="mb-8 border-b border-editorial-borderLight pb-5">
+        <p className="eyebrow">Search the brief</p>
+        <h1 className="mt-2 font-serif text-3xl font-bold text-editorial-charcoal sm:text-5xl">
           Find a story
         </h1>
       </header>

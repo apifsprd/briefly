@@ -58,7 +58,7 @@ function normalizeTitle(value: string): string {
     .trim();
 }
 
-function getKeywords(value: string): Set<string> {
+export function getKeywords(value: string): Set<string> {
   return new Set(
     normalizeTitle(value)
       .split(" ")
@@ -143,7 +143,7 @@ function normalizeArticles(items: RssItemNotSeparated[]): StoryArticle[] {
         sourceImage: item.publisherImage,
         sourceUrl: item.publisherUrl,
         category: item.category || "world",
-        publishedAt: item.isoDate || "",
+        publishedAt: item.isoDate || item.pubDate || "",
       },
     ];
   });

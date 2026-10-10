@@ -130,9 +130,14 @@ const mainUrl = (url: string) => {
   }
 };
 
-const publisherImage = (image: string | undefined, name: string) =>
-  safeImageUrl(image) ||
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "Briefly")}&background=random&length=${(name || "Briefly").split(" ").length}`;
+const publisherImage = (image: string | undefined, name: string) => {
+  const safeName = (name || "Briefly").trim();
+  const wordCount = safeName.split(/\s+/).filter(Boolean).length || 1;
+  return (
+    safeImageUrl(image) ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(safeName)}&background=random&length=${wordCount}`
+  );
+};
 
 async function fetchRssFeed({ category }: { category: string }) {
   try {
