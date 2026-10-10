@@ -127,7 +127,9 @@ export function StoryCollection({
       {(heading || showPreferences) && (
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-editorial-borderLight pb-4">
           {heading && (
-            <h2 className="font-serif text-2xl font-bold text-editorial-charcoal">{heading}</h2>
+            <h2 className="font-serif text-2xl font-bold text-editorial-charcoal">
+              {heading}
+            </h2>
           )}
           {showPreferences && categoryOptions.length > 0 && (
             <details className="relative">
@@ -219,7 +221,10 @@ export function StoryCollection({
                         {story.category}
                       </Link>
                       <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] text-emerald-800">
-                        {story.sourceCount} {story.sourceCount === 1 ? "source" : "sources summarized"}
+                        {story.sourceCount}{" "}
+                        {story.sourceCount === 1
+                          ? "source"
+                          : "sources summarized"}
                       </span>
                       <span>{relativeTime(story.lastUpdatedAt)}</span>
                       {story.momentum && (
@@ -277,7 +282,7 @@ export function StoryCollection({
                     </div>
 
                     {leadArticle.description && (
-                        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-editorial-body sm:text-base">
+                      <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-editorial-body sm:text-base">
                         {leadArticle.description}
                       </p>
                     )}

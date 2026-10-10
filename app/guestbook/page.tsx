@@ -13,13 +13,13 @@ export default function GuestbookPage() {
         </h1>
         <p className="text-sm leading-relaxed text-editorial-body md:text-base">
           Thank you for visiting{" "}
-          <span className="font-semibold text-editorial-accent">Briefly</span>. This
-          page is open to anyone who wants to share their thoughts, provide
+          <span className="font-semibold text-editorial-accent">Briefly</span>.
+          This page is open to anyone who wants to share their thoughts, provide
           feedback on version{" "}
           <span className="rounded bg-editorial-surfaceMuted px-2 py-0.5 font-mono text-sm text-editorial-charcoal">
             v{version}
           </span>
-            , or simply say hello.
+          , or simply say hello.
         </p>
       </header>
 

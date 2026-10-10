@@ -19,7 +19,9 @@ export default function AboutPage() {
       <article className="mx-auto w-full max-w-3xl rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_10px_rgba(20,20,19,0.03)] sm:p-8 md:p-10">
         <header className="mb-8 flex flex-col items-start gap-5 sm:mb-10 sm:gap-6">
           <p className="eyebrow">Our editorial approach</p>
-          <h1 className="font-serif text-4xl font-bold text-editorial-charcoal sm:text-5xl">About Briefly</h1>
+          <h1 className="font-serif text-4xl font-bold text-editorial-charcoal sm:text-5xl">
+            About Briefly
+          </h1>
           <p className="leading-relaxed tracking-wide">
             In today’s massive information era, keeping up with the news has
             become a daily necessity. But with the social media and AI boom,

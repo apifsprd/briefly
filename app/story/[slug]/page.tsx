@@ -63,7 +63,8 @@ export default async function StoryPage({ params }: StoryPageProps) {
           {story.category} edition
         </Link>
         <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
-          {story.sourceCount} {story.sourceCount === 1 ? "source" : "sources summarized"}
+          {story.sourceCount}{" "}
+          {story.sourceCount === 1 ? "source" : "sources summarized"}
         </span>
       </div>
 
@@ -122,7 +123,10 @@ export default async function StoryPage({ params }: StoryPageProps) {
             </h2>
             <ul className="mt-4 space-y-3">
               {story.articles.slice(0, 4).map((article) => (
-                <li key={article.id} className="border-b border-editorial-borderLight py-4 last:border-0 last:pb-0">
+                <li
+                  key={article.id}
+                  className="border-b border-editorial-borderLight py-4 last:border-0 last:pb-0"
+                >
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-editorial-accent">
                     {article.sourceName}
                   </p>
@@ -220,8 +224,10 @@ export default async function StoryPage({ params }: StoryPageProps) {
             </section>
           )}
 
-            <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
-            <h2 className="font-serif text-2xl font-bold text-editorial-charcoal">Timeline</h2>
+          <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
+            <h2 className="font-serif text-2xl font-bold text-editorial-charcoal">
+              Timeline
+            </h2>
             {timeline.length > 0 ? (
               <ol className="mt-5 space-y-5 border-l border-editorial-border pl-5">
                 {timeline.map((article) => (
@@ -255,7 +261,9 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
         <aside className="space-y-6 lg:col-span-4">
           <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
-            <h2 className="font-serif text-xl font-bold text-editorial-charcoal">Covered by</h2>
+            <h2 className="font-serif text-xl font-bold text-editorial-charcoal">
+              Covered by
+            </h2>
             <ul className="mt-4 space-y-3">
               {story.articles.map((article) => (
                 <li
@@ -285,7 +293,9 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
           {story.topics.length > 0 && (
             <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
-              <h2 className="font-serif text-xl font-bold text-editorial-charcoal">Topics</h2>
+              <h2 className="font-serif text-xl font-bold text-editorial-charcoal">
+                Topics
+              </h2>
               <div className="mt-4 flex flex-wrap gap-2">
                 {story.topics.map((topic) => (
                   <span

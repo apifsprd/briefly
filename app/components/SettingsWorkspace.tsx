@@ -40,7 +40,9 @@ function readSettings() {
 
     const categories = Array.isArray(stored.categories)
       ? stored.categories
-          .filter((value: unknown): value is string => typeof value === "string")
+          .filter(
+            (value: unknown): value is string => typeof value === "string",
+          )
           .map((id: string) => (id === "technology" ? "tech" : id))
       : [...defaultSettings.categories];
 
@@ -93,7 +95,9 @@ export function SettingsWorkspace() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
-        <h2 className="font-serif text-xl font-bold text-editorial-charcoal">Appearance</h2>
+        <h2 className="font-serif text-xl font-bold text-editorial-charcoal">
+          Appearance
+        </h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {appearanceOptions.map(({ value, label, icon: Icon }) => (
             <button
@@ -116,7 +120,9 @@ export function SettingsWorkspace() {
       </section>
 
       <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
-        <h2 className="font-serif text-xl font-bold text-editorial-charcoal">Content</h2>
+        <h2 className="font-serif text-xl font-bold text-editorial-charcoal">
+          Content
+        </h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {availableCategories.map(({ id, name }) => (
             <label
@@ -137,7 +143,9 @@ export function SettingsWorkspace() {
       </section>
 
       <section className="rounded-xl border border-editorial-border/80 bg-white p-5 shadow-[0_2px_8px_rgba(20,20,19,0.02)] sm:p-6">
-        <h2 className="font-serif text-xl font-bold text-editorial-charcoal">Sources</h2>
+        <h2 className="font-serif text-xl font-bold text-editorial-charcoal">
+          Sources
+        </h2>
         <p className="mt-2 text-sm text-editorial-body">
           Briefly keeps you connected to the feeds you follow. Manage preferred
           sources at the feed registry level in the project configuration.

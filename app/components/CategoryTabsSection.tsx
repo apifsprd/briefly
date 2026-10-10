@@ -56,7 +56,11 @@ export function CategoryTabsSection({
     <section className="space-y-6 pt-4" data-purpose="category-tabs-section">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-editorial-borderLight pb-3">
         <div className="flex items-center space-x-2.5">
-          <Layers size={18} className="text-editorial-accent" aria-hidden="true" />
+          <Layers
+            size={18}
+            className="text-editorial-accent"
+            aria-hidden="true"
+          />
           <h2 className="font-serif text-2xl font-bold text-editorial-charcoal tracking-tight">
             Liputan per Edisi &amp; Topik
           </h2>
@@ -158,7 +162,9 @@ export function CategoryTabsSection({
             href={`/${activeTab}`}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-editorial-border bg-white text-xs font-bold text-editorial-charcoal hover:bg-neutral-900 hover:text-white transition shadow-sm"
           >
-            <span>Jelajahi Arsip &amp; Liputan Penuh {currentCategory?.name}</span>
+            <span>
+              Jelajahi Arsip &amp; Liputan Penuh {currentCategory?.name}
+            </span>
             <ArrowRight size={13} aria-hidden="true" />
           </Link>
         </div>
@@ -166,4 +172,3 @@ export function CategoryTabsSection({
     </section>
   );
 }
-
